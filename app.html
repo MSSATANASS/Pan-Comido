@@ -3,10 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pan Comido App</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #22c55e;
@@ -42,7 +43,6 @@
             overflow: hidden;
         }
 
-        /* Screens */
         .screen {
             display: none;
             height: 100vh;
@@ -53,7 +53,7 @@
             display: flex;
         }
 
-        /* Login Screen */
+        /* Login */
         .login-screen {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             padding: 40px 24px;
@@ -121,7 +121,7 @@
             color: white;
         }
 
-        /* Home Screen */
+        /* Header */
         .header {
             padding: 20px;
             background: white;
@@ -161,6 +161,7 @@
             color: var(--text-secondary);
         }
 
+        /* Categories */
         .categories {
             display: flex;
             gap: 12px;
@@ -192,6 +193,7 @@
             border-color: var(--primary);
         }
 
+        /* Feed */
         .feed {
             flex: 1;
             overflow-y: auto;
@@ -216,6 +218,7 @@
             font-weight: 600;
         }
 
+        /* Offer Card */
         .offer-card {
             background: white;
             border-radius: 16px;
@@ -317,7 +320,7 @@
             font-size: 14px;
         }
 
-        /* Offer Detail Screen */
+        /* Detail Screen */
         .detail-screen {
             background: white;
         }
@@ -484,7 +487,7 @@
             cursor: pointer;
         }
 
-        /* Orders Screen */
+        /* Orders */
         .orders-header {
             padding: 20px;
             background: white;
@@ -551,11 +554,6 @@
             color: #d97706;
         }
 
-        .status-ready {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-
         .status-completed {
             background: #dcfce7;
             color: #16a34a;
@@ -587,7 +585,7 @@
             letter-spacing: 4px;
         }
 
-        /* Profile Screen */
+        /* Profile */
         .profile-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             padding: 40px 24px;
@@ -712,7 +710,7 @@
             font-size: 24px;
         }
 
-        /* Success Modal */
+        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -785,6 +783,23 @@
             font-weight: 600;
             cursor: pointer;
         }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 16px;
+        }
     </style>
 </head>
 
@@ -797,14 +812,14 @@
             <p class="login-subtitle">Rescata comida, ahorra dinero</p>
             <div class="login-form">
                 <div class="input-group">
-                    <input type="email" placeholder="Tu correo electrónico" id="loginEmail">
+                    <input type="text" placeholder="Tu nombre" id="userName">
                 </div>
                 <div class="input-group">
-                    <input type="password" placeholder="Contraseña" id="loginPassword">
+                    <input type="email" placeholder="Tu correo electrónico" id="userEmail">
                 </div>
-                <button class="btn-login" onclick="login()">Iniciar Sesión</button>
+                <button class="btn-login" onclick="login()">Continuar</button>
                 <p class="login-divider">— o —</p>
-                <button class="btn-login btn-guest" onclick="login()">Continuar como invitado</button>
+                <button class="btn-login btn-guest" onclick="loginGuest()">Continuar como invitado</button>
             </div>
         </div>
 
@@ -812,7 +827,7 @@
         <div class="screen" id="homeScreen">
             <div class="header">
                 <div class="header-top">
-                    <div class="location">📍 Roma Norte, CDMX ▾</div>
+                    <div class="location">📍 CDMX ▾</div>
                     <div class="header-icons">
                         <span>🔔</span>
                         <span onclick="showScreen('profileScreen')">👤</span>
@@ -821,154 +836,52 @@
                 <div class="search-bar">🔍 Buscar comida, restaurantes...</div>
             </div>
             <div class="categories">
-                <div class="cat-chip active">🍽️ Todo</div>
-                <div class="cat-chip">🍕 Pizza</div>
-                <div class="cat-chip">🍣 Sushi</div>
-                <div class="cat-chip">🍞 Panadería</div>
-                <div class="cat-chip">🌮 Tacos</div>
-                <div class="cat-chip">🍔 Hamburguesas</div>
-                <div class="cat-chip">☕ Café</div>
+                <div class="cat-chip active" data-cat="all">🍽️ Todo</div>
+                <div class="cat-chip" data-cat="Pizza">🍕 Pizza</div>
+                <div class="cat-chip" data-cat="Sushi">🍣 Sushi</div>
+                <div class="cat-chip" data-cat="Panadería">🍞 Panadería</div>
+                <div class="cat-chip" data-cat="Tacos">🌮 Tacos</div>
             </div>
             <div class="feed">
                 <div class="section-header">
-                    <span class="section-title">🔥 Ofertas cerca de ti</span>
-                    <span class="see-all">Ver todas</span>
+                    <span class="section-title">🔥 Ofertas disponibles</span>
+                    <span class="see-all" onclick="loadOffers()">Actualizar</span>
                 </div>
-
-                <div class="offer-card" onclick="showOffer(1)">
-                    <div class="offer-img"
-                        style="background-image: url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400')">
-                        <span class="offer-badge">🔥 Quedan 3</span>
-                        <span class="offer-discount">-67%</span>
-                    </div>
-                    <div class="offer-content">
-                        <div class="offer-header">
-                            <span class="offer-name">Pizza Margherita Familiar</span>
-                            <span class="offer-rating">⭐ 4.8</span>
-                        </div>
-                        <div class="offer-restaurant">Pizzería Don Carlo • 0.8 km</div>
-                        <div class="offer-time">🕒 Recoger hoy 20:00 - 21:00</div>
-                        <div class="offer-price">
-                            <span class="price-new">$60</span>
-                            <span class="price-old">$180</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="offer-card" onclick="showOffer(2)">
-                    <div class="offer-img"
-                        style="background-image: url('https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400')">
-                        <span class="offer-badge">🎒 Bolsa Sorpresa</span>
-                        <span class="offer-discount">-65%</span>
-                    </div>
-                    <div class="offer-content">
-                        <div class="offer-header">
-                            <span class="offer-name">Combo Sushi Premium</span>
-                            <span class="offer-rating">⭐ 4.5</span>
-                        </div>
-                        <div class="offer-restaurant">Sushi Zen • 1.2 km</div>
-                        <div class="offer-time">🕒 Recoger hoy 21:00 - 22:00</div>
-                        <div class="offer-price">
-                            <span class="price-new">$85</span>
-                            <span class="price-old">$250</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="offer-card" onclick="showOffer(3)">
-                    <div class="offer-img"
-                        style="background-image: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400')">
-                        <span class="offer-badge">🥖 Panadería</span>
-                        <span class="offer-discount">-70%</span>
-                    </div>
-                    <div class="offer-content">
-                        <div class="offer-header">
-                            <span class="offer-name">Caja Sorpresa Panadería</span>
-                            <span class="offer-rating">⭐ 4.9</span>
-                        </div>
-                        <div class="offer-restaurant">La Panadería del Centro • 0.5 km</div>
-                        <div class="offer-time">🕒 Recoger hoy 19:00 - 20:00</div>
-                        <div class="offer-price">
-                            <span class="price-new">$45</span>
-                            <span class="price-old">$150</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="offer-card" onclick="showOffer(4)">
-                    <div class="offer-img"
-                        style="background-image: url('https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=400')">
-                        <span class="offer-badge">🍔 Combo</span>
-                        <span class="offer-discount">-60%</span>
-                    </div>
-                    <div class="offer-content">
-                        <div class="offer-header">
-                            <span class="offer-name">Hamburguesa Doble + Papas</span>
-                            <span class="offer-rating">⭐ 4.6</span>
-                        </div>
-                        <div class="offer-restaurant">Burger House • 1.5 km</div>
-                        <div class="offer-time">🕒 Recoger hoy 20:30 - 21:30</div>
-                        <div class="offer-price">
-                            <span class="price-new">$55</span>
-                            <span class="price-old">$140</span>
-                        </div>
-                    </div>
+                <div id="offersList">
+                    <div class="loading">Cargando ofertas...</div>
                 </div>
             </div>
             <div class="bottom-nav">
-                <div class="nav-item active" onclick="showScreen('homeScreen')">
-                    <span class="nav-icon">🏠</span>
-                    <span>Inicio</span>
-                </div>
-                <div class="nav-item">
-                    <span class="nav-icon">❤️</span>
-                    <span>Favoritos</span>
-                </div>
-                <div class="nav-item" onclick="showScreen('ordersScreen')">
-                    <span class="nav-icon">🧾</span>
-                    <span>Pedidos</span>
-                </div>
-                <div class="nav-item" onclick="showScreen('profileScreen')">
-                    <span class="nav-icon">👤</span>
-                    <span>Perfil</span>
-                </div>
+                <div class="nav-item active" onclick="showScreen('homeScreen')"><span
+                        class="nav-icon">🏠</span><span>Inicio</span></div>
+                <div class="nav-item"><span class="nav-icon">❤️</span><span>Favoritos</span></div>
+                <div class="nav-item" onclick="showScreen('ordersScreen')"><span
+                        class="nav-icon">🧾</span><span>Pedidos</span></div>
+                <div class="nav-item" onclick="showScreen('profileScreen')"><span
+                        class="nav-icon">👤</span><span>Perfil</span></div>
             </div>
         </div>
 
         <!-- Offer Detail Screen -->
         <div class="screen detail-screen" id="detailScreen">
-            <div class="detail-header" id="detailImg"
-                style="background-image: url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800')">
+            <div class="detail-header" id="detailImg">
                 <div class="detail-back" onclick="showScreen('homeScreen')">←</div>
             </div>
             <div class="detail-content">
                 <div class="detail-badges">
-                    <span class="detail-badge">🔥 Popular</span>
-                    <span class="detail-badge">-67% Descuento</span>
+                    <span class="detail-badge" id="detailDiscount">-67%</span>
                 </div>
-                <h1 class="detail-title" id="detailTitle">Pizza Margherita Familiar</h1>
-                <p class="detail-restaurant" id="detailRestaurant">Pizzería Don Carlo</p>
-                <div class="detail-rating">
-                    <span>⭐ 4.8</span>
-                    <span style="color: var(--text-secondary)">(128 reseñas)</span>
-                </div>
-                <p class="detail-desc" id="detailDesc">
-                    Pizza familiar de masa artesanal con salsa de tomate italiano,
-                    mozzarella fresca y albahaca. Perfecta para compartir.
-                    Rescatada del excedente del día, en perfecto estado.
-                </p>
+                <h1 class="detail-title" id="detailTitle">Cargando...</h1>
+                <p class="detail-restaurant" id="detailRestaurant"></p>
+                <p class="detail-desc" id="detailDesc"></p>
                 <div class="detail-info">
                     <div class="info-row">
-                        <span class="info-label">📍 Distancia</span>
-                        <span class="info-value">0.8 km</span>
-                    </div>
-                    <div class="info-row">
                         <span class="info-label">🕒 Horario recogida</span>
-                        <span class="info-value">20:00 - 21:00</span>
+                        <span class="info-value" id="detailTime"></span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">📦 Disponibles</span>
-                        <span class="info-value" id="detailStock">3 unidades</span>
+                        <span class="info-value" id="detailStock"></span>
                     </div>
                 </div>
                 <div class="quantity-selector">
@@ -980,7 +893,7 @@
             <div class="detail-footer">
                 <div class="detail-total">
                     <div class="total-label">Total a pagar</div>
-                    <div class="total-price" id="totalPrice">$60</div>
+                    <div class="total-price" id="totalPrice">$0</div>
                 </div>
                 <button class="btn-reserve" onclick="reserveOffer()">Reservar 🛒</button>
             </div>
@@ -990,31 +903,18 @@
         <div class="screen" id="ordersScreen" style="background: var(--bg);">
             <div class="orders-header">
                 <h1 class="orders-title">Mis Pedidos</h1>
-                <div class="orders-tabs">
-                    <span class="order-tab active">Activos</span>
-                    <span class="order-tab">Historial</span>
-                </div>
             </div>
             <div class="orders-list" id="ordersList">
-                <!-- Orders will be rendered here -->
+                <div class="loading">Cargando pedidos...</div>
             </div>
             <div class="bottom-nav">
-                <div class="nav-item" onclick="showScreen('homeScreen')">
-                    <span class="nav-icon">🏠</span>
-                    <span>Inicio</span>
-                </div>
-                <div class="nav-item">
-                    <span class="nav-icon">❤️</span>
-                    <span>Favoritos</span>
-                </div>
-                <div class="nav-item active" onclick="showScreen('ordersScreen')">
-                    <span class="nav-icon">🧾</span>
-                    <span>Pedidos</span>
-                </div>
-                <div class="nav-item" onclick="showScreen('profileScreen')">
-                    <span class="nav-icon">👤</span>
-                    <span>Perfil</span>
-                </div>
+                <div class="nav-item" onclick="showScreen('homeScreen')"><span
+                        class="nav-icon">🏠</span><span>Inicio</span></div>
+                <div class="nav-item"><span class="nav-icon">❤️</span><span>Favoritos</span></div>
+                <div class="nav-item active" onclick="showScreen('ordersScreen')"><span
+                        class="nav-icon">🧾</span><span>Pedidos</span></div>
+                <div class="nav-item" onclick="showScreen('profileScreen')"><span
+                        class="nav-icon">👤</span><span>Perfil</span></div>
             </div>
         </div>
 
@@ -1022,8 +922,8 @@
         <div class="screen" id="profileScreen" style="background: var(--bg);">
             <div class="profile-header">
                 <div class="profile-avatar">👤</div>
-                <h2 class="profile-name" id="userName">Usuario Demo</h2>
-                <p class="profile-email" id="userEmail">demo@pancomido.mx</p>
+                <h2 class="profile-name" id="profileName">Usuario</h2>
+                <p class="profile-email" id="profileEmail">email@demo.com</p>
                 <div class="profile-stats">
                     <div class="profile-stat">
                         <div class="stat-number" id="userOrders">0</div>
@@ -1042,60 +942,25 @@
             <div class="profile-content">
                 <div class="profile-section">
                     <div class="section-label">Cuenta</div>
-                    <div class="menu-item">
-                        <span class="menu-icon">📝</span>
-                        <span class="menu-label">Editar perfil</span>
-                        <span class="menu-arrow">→</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-icon">💳</span>
-                        <span class="menu-label">Métodos de pago</span>
-                        <span class="menu-arrow">→</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-icon">🔔</span>
-                        <span class="menu-label">Notificaciones</span>
-                        <span class="menu-arrow">→</span>
-                    </div>
+                    <div class="menu-item"><span class="menu-icon">📝</span><span class="menu-label">Editar
+                            perfil</span><span class="menu-arrow">→</span></div>
+                    <div class="menu-item"><span class="menu-icon">💳</span><span class="menu-label">Métodos de
+                            pago</span><span class="menu-arrow">→</span></div>
                 </div>
                 <div class="profile-section">
-                    <div class="section-label">Soporte</div>
-                    <div class="menu-item">
-                        <span class="menu-icon">❓</span>
-                        <span class="menu-label">Ayuda y FAQ</span>
-                        <span class="menu-arrow">→</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-icon">💬</span>
-                        <span class="menu-label">Contactar soporte</span>
-                        <span class="menu-arrow">→</span>
-                    </div>
-                </div>
-                <div class="profile-section">
-                    <div class="menu-item" onclick="logout()" style="color: #ef4444;">
-                        <span class="menu-icon">🚪</span>
-                        <span class="menu-label">Cerrar sesión</span>
-                        <span class="menu-arrow">→</span>
-                    </div>
+                    <div class="menu-item" onclick="logout()" style="color: #ef4444;"><span
+                            class="menu-icon">🚪</span><span class="menu-label">Cerrar sesión</span><span
+                            class="menu-arrow">→</span></div>
                 </div>
             </div>
             <div class="bottom-nav">
-                <div class="nav-item" onclick="showScreen('homeScreen')">
-                    <span class="nav-icon">🏠</span>
-                    <span>Inicio</span>
-                </div>
-                <div class="nav-item">
-                    <span class="nav-icon">❤️</span>
-                    <span>Favoritos</span>
-                </div>
-                <div class="nav-item" onclick="showScreen('ordersScreen')">
-                    <span class="nav-icon">🧾</span>
-                    <span>Pedidos</span>
-                </div>
-                <div class="nav-item active" onclick="showScreen('profileScreen')">
-                    <span class="nav-icon">👤</span>
-                    <span>Perfil</span>
-                </div>
+                <div class="nav-item" onclick="showScreen('homeScreen')"><span
+                        class="nav-icon">🏠</span><span>Inicio</span></div>
+                <div class="nav-item"><span class="nav-icon">❤️</span><span>Favoritos</span></div>
+                <div class="nav-item" onclick="showScreen('ordersScreen')"><span
+                        class="nav-icon">🧾</span><span>Pedidos</span></div>
+                <div class="nav-item active" onclick="showScreen('profileScreen')"><span
+                        class="nav-icon">👤</span><span>Perfil</span></div>
             </div>
         </div>
     </div>
@@ -1105,7 +970,7 @@
         <div class="modal">
             <div class="modal-icon">🎉</div>
             <h2 class="modal-title">¡Reserva exitosa!</h2>
-            <p class="modal-desc">Muestra este código en el restaurante para recoger tu pedido</p>
+            <p class="modal-desc">Muestra este código en el restaurante</p>
             <div class="modal-code">
                 <div class="modal-code-label">Código de recogida</div>
                 <div class="modal-code-value" id="pickupCode">ABC123</div>
@@ -1115,48 +980,139 @@
     </div>
 
     <script>
-        // Data
-        const offers = [
-            { id: 1, name: 'Pizza Margherita Familiar', restaurant: 'Pizzería Don Carlo', price: 60, oldPrice: 180, img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800', stock: 3, time: '20:00 - 21:00', desc: 'Pizza familiar de masa artesanal con salsa de tomate italiano, mozzarella fresca y albahaca.' },
-            { id: 2, name: 'Combo Sushi Premium', restaurant: 'Sushi Zen', price: 85, oldPrice: 250, img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800', stock: 5, time: '21:00 - 22:00', desc: '12 piezas variadas de sushi premium con edamame y salsa de soya.' },
-            { id: 3, name: 'Caja Sorpresa Panadería', restaurant: 'La Panadería del Centro', price: 45, oldPrice: 150, img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800', stock: 8, time: '19:00 - 20:00', desc: 'Caja con variedad de pan dulce y salado del día.' },
-            { id: 4, name: 'Hamburguesa Doble + Papas', restaurant: 'Burger House', price: 55, oldPrice: 140, img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=800', stock: 4, time: '20:30 - 21:30', desc: 'Hamburguesa doble con queso, tocino y papas fritas.' }
-        ];
+        // Supabase config
+        const SUPABASE_URL = 'https://hyqaalkyposwzrvinbtv.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5cWFhbGt5cG9zd3pydmluYnR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg0OTk2MjgsImV4cCI6MjA1NDA3NTYyOH0.placeholder';
 
-        let orders = JSON.parse(localStorage.getItem('pancomido_orders') || '[]');
+        // Initialize Supabase (will fallback to localStorage if not available)
+        let supabase = null;
+        let useSupabase = false;
+
+        try {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                useSupabase = true;
+            }
+        } catch (e) {
+            console.log('Using localStorage fallback');
+        }
+
+        // State
+        let currentUser = JSON.parse(localStorage.getItem('pancomido_user') || 'null');
+        let offers = [];
         let currentOffer = null;
         let quantity = 1;
 
+        // Demo offers (fallback)
+        const demoOffers = [
+            { id: '1', title: 'Pizza Margherita Familiar', restaurant_name: 'Pizzería Don Carlo', discount_price: 60, original_price: 180, quantity_left: 5, pickup_start: '20:00', pickup_end: '21:00', image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'Pizza', description: 'Pizza de masa artesanal con tomate y mozzarella' },
+            { id: '2', title: 'Combo Sushi Premium', restaurant_name: 'Sushi Zen', discount_price: 85, original_price: 250, quantity_left: 8, pickup_start: '21:00', pickup_end: '22:00', image_url: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400', category: 'Sushi', description: '12 piezas variadas de sushi premium' },
+            { id: '3', title: 'Caja Sorpresa Panadería', restaurant_name: 'La Panadería del Centro', discount_price: 45, original_price: 150, quantity_left: 10, pickup_start: '19:00', pickup_end: '20:00', image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400', category: 'Panadería', description: 'Pan dulce y salado variado del día' },
+        ];
+
+        // Functions
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
-            if (screenId === 'ordersScreen') renderOrders();
+            if (screenId === 'homeScreen') loadOffers();
+            if (screenId === 'ordersScreen') loadOrders();
             if (screenId === 'profileScreen') updateProfile();
         }
 
         function login() {
+            const name = document.getElementById('userName').value || 'Usuario';
+            const email = document.getElementById('userEmail').value || 'demo@pancomido.mx';
+            currentUser = { name, email };
+            localStorage.setItem('pancomido_user', JSON.stringify(currentUser));
+            showScreen('homeScreen');
+        }
+
+        function loginGuest() {
+            currentUser = { name: 'Invitado', email: 'invitado@pancomido.mx' };
+            localStorage.setItem('pancomido_user', JSON.stringify(currentUser));
             showScreen('homeScreen');
         }
 
         function logout() {
+            currentUser = null;
+            localStorage.removeItem('pancomido_user');
             showScreen('loginScreen');
         }
 
+        async function loadOffers() {
+            const container = document.getElementById('offersList');
+            container.innerHTML = '<div class="loading">Cargando ofertas...</div>';
+
+            try {
+                if (useSupabase && supabase) {
+                    const { data, error } = await supabase.from('offers').select('*').eq('is_active', true).gt('quantity_left', 0);
+                    if (!error && data && data.length > 0) {
+                        offers = data;
+                    } else {
+                        offers = demoOffers;
+                    }
+                } else {
+                    offers = demoOffers;
+                }
+            } catch (e) {
+                offers = demoOffers;
+            }
+
+            renderOffers(offers);
+        }
+
+        function renderOffers(offersToRender) {
+            const container = document.getElementById('offersList');
+            if (offersToRender.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🍽️</div><h3>No hay ofertas disponibles</h3><p>Vuelve más tarde</p></div>';
+                return;
+            }
+            container.innerHTML = offersToRender.map(o => {
+                const discount = Math.round((1 - o.discount_price / o.original_price) * 100);
+                return `
+                <div class="offer-card" onclick="showOffer('${o.id}')">
+                    <div class="offer-img" style="background-image: url('${o.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'}')">
+                        <span class="offer-badge">🔥 Quedan ${o.quantity_left}</span>
+                        <span class="offer-discount">-${discount}%</span>
+                    </div>
+                    <div class="offer-content">
+                        <div class="offer-header">
+                            <span class="offer-name">${o.title}</span>
+                            <span class="offer-rating">⭐ 4.8</span>
+                        </div>
+                        <div class="offer-restaurant">${o.restaurant_name}</div>
+                        <div class="offer-time">🕒 Recoger ${o.pickup_start} - ${o.pickup_end}</div>
+                        <div class="offer-price">
+                            <span class="price-new">$${o.discount_price}</span>
+                            <span class="price-old">$${o.original_price}</span>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
         function showOffer(id) {
-            currentOffer = offers.find(o => o.id === id);
+            currentOffer = offers.find(o => o.id === id || o.id === parseInt(id));
+            if (!currentOffer) return;
+
             quantity = 1;
-            document.getElementById('detailImg').style.backgroundImage = `url('${currentOffer.img}')`;
-            document.getElementById('detailTitle').textContent = currentOffer.name;
-            document.getElementById('detailRestaurant').textContent = currentOffer.restaurant;
-            document.getElementById('detailDesc').textContent = currentOffer.desc;
-            document.getElementById('detailStock').textContent = `${currentOffer.stock} unidades`;
+            const discount = Math.round((1 - currentOffer.discount_price / currentOffer.original_price) * 100);
+
+            document.getElementById('detailImg').style.backgroundImage = `url('${currentOffer.image_url}')`;
+            document.getElementById('detailTitle').textContent = currentOffer.title;
+            document.getElementById('detailRestaurant').textContent = currentOffer.restaurant_name;
+            document.getElementById('detailDesc').textContent = currentOffer.description || '';
+            document.getElementById('detailTime').textContent = `${currentOffer.pickup_start} - ${currentOffer.pickup_end}`;
+            document.getElementById('detailStock').textContent = `${currentOffer.quantity_left} unidades`;
+            document.getElementById('detailDiscount').textContent = `-${discount}%`;
+            document.getElementById('qtyValue').textContent = '1';
             updatePrice();
             showScreen('detailScreen');
         }
 
         function changeQty(delta) {
             const newQty = quantity + delta;
-            if (newQty >= 1 && newQty <= currentOffer.stock) {
+            if (newQty >= 1 && newQty <= currentOffer.quantity_left) {
                 quantity = newQty;
                 document.getElementById('qtyValue').textContent = quantity;
                 updatePrice();
@@ -1164,25 +1120,41 @@
         }
 
         function updatePrice() {
-            document.getElementById('totalPrice').textContent = '$' + (currentOffer.price * quantity);
+            document.getElementById('totalPrice').textContent = '$' + (currentOffer.discount_price * quantity);
         }
 
-        function reserveOffer() {
+        async function reserveOffer() {
             const code = Math.random().toString(36).substring(2, 8).toUpperCase();
             const order = {
-                id: Date.now(),
-                name: currentOffer.name,
-                restaurant: currentOffer.restaurant,
+                offer_id: currentOffer.id,
+                offer_title: currentOffer.title,
+                restaurant_name: currentOffer.restaurant_name,
+                user_email: currentUser?.email || 'demo@pancomido.mx',
+                user_name: currentUser?.name || 'Usuario',
                 quantity: quantity,
-                total: currentOffer.price * quantity,
-                saved: (currentOffer.oldPrice - currentOffer.price) * quantity,
-                code: code,
-                time: currentOffer.time,
-                status: 'pending',
-                date: new Date().toISOString()
+                total_price: currentOffer.discount_price * quantity,
+                saved: (currentOffer.original_price - currentOffer.discount_price) * quantity,
+                commission: currentOffer.discount_price * quantity * 0.25,
+                pickup_code: code,
+                pickup_time: `${currentOffer.pickup_start} - ${currentOffer.pickup_end}`,
+                status: 'pending'
             };
-            orders.unshift(order);
+
+            try {
+                if (useSupabase && supabase) {
+                    await supabase.from('orders').insert([order]);
+                    // Update offer quantity
+                    await supabase.from('offers').update({ quantity_left: currentOffer.quantity_left - quantity }).eq('id', currentOffer.id);
+                }
+            } catch (e) {
+                console.log('Using localStorage fallback');
+            }
+
+            // Also save to localStorage
+            let orders = JSON.parse(localStorage.getItem('pancomido_orders') || '[]');
+            orders.unshift({ ...order, id: Date.now(), created_at: new Date().toISOString() });
             localStorage.setItem('pancomido_orders', JSON.stringify(orders));
+
             document.getElementById('pickupCode').textContent = code;
             document.getElementById('successModal').classList.add('show');
         }
@@ -1192,54 +1164,73 @@
             showScreen('ordersScreen');
         }
 
-        function renderOrders() {
+        async function loadOrders() {
             const container = document.getElementById('ordersList');
+            let orders = [];
+
+            try {
+                if (useSupabase && supabase && currentUser) {
+                    const { data } = await supabase.from('orders').select('*').eq('user_email', currentUser.email).order('created_at', { ascending: false });
+                    if (data) orders = data;
+                }
+            } catch (e) { }
+
+            // Merge with localStorage
+            const localOrders = JSON.parse(localStorage.getItem('pancomido_orders') || '[]');
+            orders = [...orders, ...localOrders].reduce((acc, o) => {
+                if (!acc.find(x => x.pickup_code === o.pickup_code)) acc.push(o);
+                return acc;
+            }, []);
+
             if (orders.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
-                        <div style="font-size: 60px; margin-bottom: 16px;">🧾</div>
-                        <h3>Sin pedidos aún</h3>
-                        <p>Tus pedidos aparecerán aquí</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🧾</div><h3>Sin pedidos aún</h3><p>Tus pedidos aparecerán aquí</p></div>';
                 return;
             }
+
             container.innerHTML = orders.map(o => `
                 <div class="order-card">
                     <div class="order-top">
-                        <span class="order-restaurant">${o.restaurant}</span>
-                        <span class="order-status ${o.status === 'pending' ? 'status-pending' : 'status-completed'}">
-                            ${o.status === 'pending' ? 'Pendiente' : 'Completado'}
-                        </span>
+                        <span class="order-restaurant">${o.restaurant_name}</span>
+                        <span class="order-status ${o.status === 'pending' ? 'status-pending' : 'status-completed'}">${o.status === 'pending' ? 'Pendiente' : 'Completado'}</span>
                     </div>
-                    <div class="order-item">${o.quantity}x ${o.name}</div>
-                    <div class="order-item">🕒 Recoger: ${o.time}</div>
-                    <div class="order-item" style="font-weight: 600;">Total: $${o.total} (Ahorraste $${o.saved})</div>
-                    ${o.status === 'pending' ? `
-                        <div class="order-code">
-                            <div class="code-label">Código de recogida</div>
-                            <div class="code-value">${o.code}</div>
-                        </div>
-                    ` : ''}
+                    <div class="order-item">${o.quantity}x ${o.offer_title}</div>
+                    <div class="order-item">🕒 Recoger: ${o.pickup_time}</div>
+                    <div class="order-item" style="font-weight: 600;">Total: $${o.total_price} (Ahorraste $${o.saved})</div>
+                    ${o.status === 'pending' ? `<div class="order-code"><div class="code-label">Código de recogida</div><div class="code-value">${o.pickup_code}</div></div>` : ''}
                 </div>
             `).join('');
         }
 
         function updateProfile() {
-            const totalOrders = orders.length;
-            const totalSaved = orders.reduce((sum, o) => sum + o.saved, 0);
-            document.getElementById('userOrders').textContent = totalOrders;
+            if (currentUser) {
+                document.getElementById('profileName').textContent = currentUser.name;
+                document.getElementById('profileEmail').textContent = currentUser.email;
+            }
+            const orders = JSON.parse(localStorage.getItem('pancomido_orders') || '[]');
+            const totalSaved = orders.reduce((sum, o) => sum + (o.saved || 0), 0);
+            document.getElementById('userOrders').textContent = orders.length;
             document.getElementById('userSaved').textContent = '$' + totalSaved;
-            document.getElementById('userKg').textContent = (totalOrders * 0.5).toFixed(1) + ' kg';
+            document.getElementById('userKg').textContent = (orders.length * 0.5).toFixed(1) + ' kg';
         }
 
-        // Category chips
+        // Category filter
         document.querySelectorAll('.cat-chip').forEach(chip => {
             chip.addEventListener('click', function () {
                 document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
+                const cat = this.dataset.cat;
+                if (cat === 'all') {
+                    renderOffers(offers);
+                } else {
+                    renderOffers(offers.filter(o => o.category === cat));
+                }
             });
         });
+
+        // Auto-login if user exists
+        if (currentUser) {
+            showScreen('homeScreen');
+        }
     </script>
 </body>
 

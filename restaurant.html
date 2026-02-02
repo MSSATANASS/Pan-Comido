@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .dashboard {
             display: flex;
@@ -22,7 +23,6 @@
             padding: 24px;
             position: fixed;
             height: 100vh;
-            overflow-y: auto;
         }
 
         .sidebar-logo {
@@ -63,16 +63,182 @@
             flex: 1;
         }
 
-        .dash-header {
+        .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 32px;
         }
 
-        .dash-title {
+        .page-title {
             font-size: 28px;
             font-weight: 700;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            color: var(--text-light);
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .offer-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .offer-img {
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .offer-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--primary);
+        }
+
+        .status-paused {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+        }
+
+        .offer-content {
+            padding: 16px;
+        }
+
+        .offer-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .offer-meta {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .offer-price {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .price-new {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .price-old {
+            text-decoration: line-through;
+            color: #64748b;
+        }
+
+        .offer-stock {
+            background: #1e293b;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .offer-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-edit {
+            background: #334155;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
         }
 
         .stats-grid {
@@ -86,7 +252,7 @@
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 24px;
+            padding: 20px;
         }
 
         .stat-card.primary {
@@ -99,166 +265,18 @@
         }
 
         .stat-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
+            font-size: 28px;
+            margin-bottom: 8px;
         }
 
         .stat-value {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 4px;
         }
 
         .stat-label {
             color: #64748b;
             font-size: 14px;
-        }
-
-        .stat-change {
-            color: var(--primary);
-            font-size: 13px;
-            margin-top: 8px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            text-align: left;
-            padding: 14px;
-            color: #64748b;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border);
-        }
-
-        td {
-            padding: 16px 14px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .status {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-active {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--primary);
-        }
-
-        .status-sold {
-            background: rgba(249, 115, 22, 0.15);
-            color: #f97316;
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 32px;
-            width: 100%;
-            max-width: 500px;
-            border: 1px solid var(--border);
-        }
-
-        .modal h2 {
-            margin-bottom: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #e2e8f0;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 14px;
-            background: #1e293b;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            font-size: 16px;
-            color: #fff;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-
-        .modal-actions .btn {
-            flex: 1;
-            justify-content: center;
         }
 
         .empty-state {
@@ -272,9 +290,17 @@
             margin-bottom: 16px;
         }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1200px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: span 1;
             }
         }
 
@@ -294,168 +320,378 @@
     <div class="dashboard">
         <aside class="sidebar">
             <div class="sidebar-logo">🍕 Pan Comido</div>
-            <div class="sidebar-sub">Panel de Restaurante</div>
+            <div class="sidebar-sub">Panel Restaurante</div>
             <nav>
-                <a class="nav-item active">📦 Mis Ofertas</a>
-                <a class="nav-item">🧾 Pedidos</a>
-                <a class="nav-item">📊 Estadísticas</a>
-                <a class="nav-item">⚙️ Configuración</a>
+                <a class="nav-item active" onclick="showSection('dashboard')">📊 Dashboard</a>
+                <a class="nav-item" onclick="showSection('offers')">📦 Mis Ofertas</a>
+                <a class="nav-item" onclick="showSection('new-offer')">➕ Nueva Oferta</a>
+                <a class="nav-item" onclick="showSection('orders')">🧾 Pedidos</a>
+                <a class="nav-item" onclick="showSection('settings')">⚙️ Configuración</a>
                 <a class="nav-item" href="index.html">🏠 Volver al inicio</a>
             </nav>
         </aside>
 
         <main class="main-content">
-            <div class="dash-header">
-                <h1 class="dash-title">Panel de Restaurante</h1>
-                <button class="btn btn-primary" onclick="openModal()">+ Nueva Oferta</button>
-            </div>
+            <!-- Dashboard Section -->
+            <section id="section-dashboard">
+                <div class="page-header">
+                    <h1 class="page-title">Dashboard</h1>
+                    <button class="btn btn-primary" onclick="showSection('new-offer')">+ Nueva Oferta</button>
+                </div>
 
-            <div class="stats-grid">
-                <div class="stat-card primary">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-value">$1,250</div>
-                    <div class="stat-label">Ventas del día</div>
-                    <div class="stat-change">↑ 15% vs ayer</div>
+                <div class="stats-grid">
+                    <div class="stat-card primary">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value" id="totalRevenue">$0</div>
+                        <div class="stat-label">Ingresos hoy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🧾</div>
+                        <div class="stat-value" id="totalOrders">0</div>
+                        <div class="stat-label">Pedidos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-value" id="activeOffers">0</div>
+                        <div class="stat-label">Ofertas activas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🌱</div>
+                        <div class="stat-value" id="foodSaved">0 kg</div>
+                        <div class="stat-label">Comida rescatada</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🧾</div>
-                    <div class="stat-value">8</div>
-                    <div class="stat-label">Pedidos activos</div>
-                    <div class="stat-change">3 listos para recoger</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📦</div>
-                    <div class="stat-value" id="activeOffers">0</div>
-                    <div class="stat-label">Ofertas activas</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🌱</div>
-                    <div class="stat-value">47 kg</div>
-                    <div class="stat-label">Comida rescatada</div>
-                    <div class="stat-change">Este mes</div>
-                </div>
-            </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Mis Ofertas</span>
-                    <button class="btn btn-secondary" onclick="openModal()">+ Agregar</button>
+                <div class="card">
+                    <h3 class="card-title">Pedidos recientes</h3>
+                    <div id="recentOrders">
+                        <div class="empty-state">
+                            <div class="empty-icon">🧾</div>
+                            <p>Sin pedidos aún</p>
+                        </div>
+                    </div>
                 </div>
-                <div id="offersTable"></div>
-            </div>
+            </section>
+
+            <!-- Offers Section -->
+            <section id="section-offers" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Mis Ofertas</h1>
+                    <button class="btn btn-primary" onclick="showSection('new-offer')">+ Nueva Oferta</button>
+                </div>
+                <div class="offers-grid" id="offersGrid">
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <p>No tienes ofertas. ¡Crea tu primera!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- New Offer Section -->
+            <section id="section-new-offer" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Nueva Oferta</h1>
+                </div>
+                <div class="card">
+                    <form id="offerForm" onsubmit="createOffer(event)">
+                        <div class="form-grid">
+                            <div class="form-group full">
+                                <label>Título de la oferta</label>
+                                <input type="text" name="title" placeholder="Ej: Pizza Margherita Familiar" required>
+                            </div>
+                            <div class="form-group full">
+                                <label>Descripción</label>
+                                <textarea name="description"
+                                    placeholder="Describe el contenido de la oferta..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Precio original ($)</label>
+                                <input type="number" name="original_price" placeholder="180" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Precio con descuento ($)</label>
+                                <input type="number" name="discount_price" placeholder="60" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Cantidad disponible</label>
+                                <input type="number" name="quantity" placeholder="5" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Categoría</label>
+                                <select name="category">
+                                    <option value="Pizza">🍕 Pizza</option>
+                                    <option value="Sushi">🍣 Sushi</option>
+                                    <option value="Panadería">🍞 Panadería</option>
+                                    <option value="Tacos">🌮 Tacos</option>
+                                    <option value="Hamburguesas">🍔 Hamburguesas</option>
+                                    <option value="Café">☕ Café</option>
+                                    <option value="Otro">🍽️ Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Hora inicio recogida</label>
+                                <input type="time" name="pickup_start" value="19:00" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Hora fin recogida</label>
+                                <input type="time" name="pickup_end" value="21:00" required>
+                            </div>
+                            <div class="form-group full">
+                                <label>URL de imagen (opcional)</label>
+                                <input type="url" name="image_url" placeholder="https://...">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Publicar Oferta</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="section-orders" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Pedidos</h1>
+                </div>
+                <div class="card">
+                    <div id="ordersList">
+                        <div class="empty-state">
+                            <div class="empty-icon">🧾</div>
+                            <p>Sin pedidos aún</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="section-settings" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Configuración</h1>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Datos del restaurante</h3>
+                    <form id="settingsForm" onsubmit="saveSettings(event)">
+                        <div class="form-group">
+                            <label>Nombre del restaurante</label>
+                            <input type="text" name="name" id="restaurantName" placeholder="Mi Restaurante" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" id="restaurantEmail"
+                                placeholder="contacto@mirestaurante.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" name="phone" id="restaurantPhone" placeholder="+52 55 1234 5678">
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <input type="text" name="address" id="restaurantAddress"
+                                placeholder="Av. Reforma 123, CDMX">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </form>
+                </div>
+            </section>
         </main>
     </div>
 
-    <!-- Modal Nueva Oferta -->
-    <div class="modal-overlay" id="offerModal">
-        <div class="modal">
-            <h2>🍽️ Nueva Oferta</h2>
-            <form id="offerForm">
-                <div class="form-group">
-                    <label>Título de la oferta</label>
-                    <input type="text" id="title" placeholder="Ej: Caja Sorpresa del día" required>
-                </div>
-                <div class="form-group">
-                    <label>Descripción</label>
-                    <textarea id="description" rows="3" placeholder="¿Qué incluye la oferta?"></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Precio Original ($)</label>
-                        <input type="number" id="originalPrice" placeholder="150" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Precio con Descuento ($)</label>
-                        <input type="number" id="discountPrice" placeholder="45" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Cantidad disponible</label>
-                        <input type="number" id="quantity" placeholder="5" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Categoría</label>
-                        <select id="category">
-                            <option value="🍞 Panadería">🍞 Panadería</option>
-                            <option value="🍽️ Restaurante">🍽️ Restaurante</option>
-                            <option value="☕ Café">☕ Café</option>
-                            <option value="🍔 Comida Rápida">🍔 Comida Rápida</option>
-                            <option value="🍣 Sushi">🍣 Sushi</option>
-                            <option value="🍕 Pizza">🍕 Pizza</option>
-                            <option value="🌮 Tacos">🌮 Tacos</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Hora inicio recogida</label>
-                        <input type="time" id="pickupStart" value="18:00" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Hora fin recogida</label>
-                        <input type="time" id="pickupEnd" value="21:00" required>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Publicar Oferta</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
-        let offers = JSON.parse(localStorage.getItem('pancomido_offers') || '[]');
+        // Supabase config
+        const SUPABASE_URL = 'https://hyqaalkyposwzrvinbtv.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5cWFhbGt5cG9zd3pydmluYnR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg0OTk2MjgsImV4cCI6MjA1NDA3NTYyOH0.placeholder';
+
+        let supabase = null;
+        let useSupabase = false;
+
+        try {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                useSupabase = true;
+            }
+        } catch (e) { }
+
+        // Restaurant data
+        let restaurant = JSON.parse(localStorage.getItem('pancomido_restaurant') || '{"name": "Mi Restaurante", "email": "", "phone": "", "address": ""}');
+        let offers = JSON.parse(localStorage.getItem('pancomido_restaurant_offers') || '[]');
+        let orders = [];
+
+        function showSection(section) {
+            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+            document.getElementById('section-' + section).style.display = 'block';
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            event?.target?.classList?.add('active');
+
+            if (section === 'dashboard') loadDashboard();
+            if (section === 'offers') loadOffers();
+            if (section === 'orders') loadOrders();
+            if (section === 'settings') loadSettings();
+        }
+
+        async function loadDashboard() {
+            await loadOffers();
+            await loadOrders();
+
+            const todayOrders = orders.filter(o => {
+                const orderDate = new Date(o.created_at).toDateString();
+                return orderDate === new Date().toDateString();
+            });
+
+            const revenue = todayOrders.reduce((sum, o) => sum + (o.total_price || 0), 0);
+            const commission = revenue * 0.25;
+
+            document.getElementById('totalRevenue').textContent = '$' + (revenue - commission).toFixed(0);
+            document.getElementById('totalOrders').textContent = orders.length;
+            document.getElementById('activeOffers').textContent = offers.filter(o => o.is_active !== false).length;
+            document.getElementById('foodSaved').textContent = (orders.length * 0.5).toFixed(1) + ' kg';
+
+            // Recent orders
+            const container = document.getElementById('recentOrders');
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🧾</div><p>Sin pedidos aún</p></div>';
+            } else {
+                container.innerHTML = orders.slice(0, 5).map(o => `
+                    <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <strong>${o.pickup_code}</strong> - ${o.offer_title || 'Oferta'}
+                            <div style="color: #64748b; font-size: 14px;">${o.user_name || 'Cliente'}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="color: var(--primary); font-weight: 600;">$${o.total_price}</div>
+                            <div style="font-size: 12px; color: #64748b;">${o.status === 'pending' ? '⏳ Pendiente' : '✅ Entregado'}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function loadOffers() {
+            try {
+                if (useSupabase && supabase) {
+                    const { data } = await supabase.from('offers').select('*').eq('restaurant_name', restaurant.name);
+                    if (data) offers = data;
+                }
+            } catch (e) { }
+
+            // Merge with localStorage
+            const localOffers = JSON.parse(localStorage.getItem('pancomido_restaurant_offers') || '[]');
+            offers = [...offers, ...localOffers].reduce((acc, o) => {
+                if (!acc.find(x => x.title === o.title && x.discount_price === o.discount_price)) acc.push(o);
+                return acc;
+            }, []);
+
+            renderOffers();
+        }
 
         function renderOffers() {
-            const container = document.getElementById('offersTable');
-            document.getElementById('activeOffers').textContent = offers.filter(o => o.quantityLeft > 0).length;
-
+            const container = document.getElementById('offersGrid');
             if (offers.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📦</div>
-                        <h3>No tienes ofertas aún</h3>
-                        <p>Crea tu primera oferta para empezar a vender</p>
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div><p>No tienes ofertas. ¡Crea tu primera!</p></div>';
+                return;
+            }
+
+            container.innerHTML = offers.map((o, i) => `
+                <div class="offer-card">
+                    <div class="offer-img" style="background-image: url('${o.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'}')">
+                        <span class="offer-status ${o.is_active !== false ? 'status-active' : 'status-paused'}">${o.is_active !== false ? 'Activa' : 'Pausada'}</span>
                     </div>
-                `;
+                    <div class="offer-content">
+                        <div class="offer-title">${o.title}</div>
+                        <div class="offer-meta">🕒 ${o.pickup_start} - ${o.pickup_end}</div>
+                        <div class="offer-price">
+                            <span class="price-new">$${o.discount_price}</span>
+                            <span class="price-old">$${o.original_price}</span>
+                        </div>
+                        <div class="offer-stock">📦 ${o.quantity_left || o.quantity} disponibles</div>
+                        <div class="offer-actions">
+                            <button class="btn-small btn-edit" onclick="toggleOffer(${i})">${o.is_active !== false ? 'Pausar' : 'Activar'}</button>
+                            <button class="btn-small btn-delete" onclick="deleteOffer(${i})">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function createOffer(e) {
+            e.preventDefault();
+            const form = e.target;
+            const offer = {
+                restaurant_name: restaurant.name,
+                title: form.title.value,
+                description: form.description.value,
+                original_price: parseFloat(form.original_price.value),
+                discount_price: parseFloat(form.discount_price.value),
+                quantity: parseInt(form.quantity.value),
+                quantity_left: parseInt(form.quantity.value),
+                category: form.category.value,
+                pickup_start: form.pickup_start.value,
+                pickup_end: form.pickup_end.value,
+                image_url: form.image_url.value || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400',
+                is_active: true,
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                if (useSupabase && supabase) {
+                    await supabase.from('offers').insert([offer]);
+                }
+            } catch (e) { }
+
+            offers.push(offer);
+            localStorage.setItem('pancomido_restaurant_offers', JSON.stringify(offers));
+
+            alert('¡Oferta publicada!');
+            form.reset();
+            showSection('offers');
+        }
+
+        function toggleOffer(index) {
+            offers[index].is_active = !offers[index].is_active;
+            localStorage.setItem('pancomido_restaurant_offers', JSON.stringify(offers));
+            renderOffers();
+        }
+
+        function deleteOffer(index) {
+            if (confirm('¿Eliminar esta oferta?')) {
+                offers.splice(index, 1);
+                localStorage.setItem('pancomido_restaurant_offers', JSON.stringify(offers));
+                renderOffers();
+            }
+        }
+
+        async function loadOrders() {
+            try {
+                if (useSupabase && supabase) {
+                    const { data } = await supabase.from('orders').select('*').eq('restaurant_name', restaurant.name).order('created_at', { ascending: false });
+                    if (data) orders = data;
+                }
+            } catch (e) { }
+
+            const container = document.getElementById('ordersList');
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🧾</div><p>Sin pedidos aún. Cuando los clientes compren, aparecerán aquí.</p></div>';
                 return;
             }
 
             container.innerHTML = `
-                <table>
+                <table style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr>
-                            <th>Oferta</th>
-                            <th>Precio</th>
-                            <th>Disponibles</th>
-                            <th>Horario</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <th style="text-align: left; padding: 12px; color: #64748b;">Código</th>
+                            <th style="text-align: left; padding: 12px; color: #64748b;">Cliente</th>
+                            <th style="text-align: left; padding: 12px; color: #64748b;">Oferta</th>
+                            <th style="text-align: left; padding: 12px; color: #64748b;">Total</th>
+                            <th style="text-align: left; padding: 12px; color: #64748b;">Estado</th>
+                            <th style="text-align: left; padding: 12px; color: #64748b;">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${offers.map((o, i) => `
-                            <tr>
-                                <td>
-                                    <strong>${o.title}</strong><br>
-                                    <small style="color:#64748b">${o.category}</small>
-                                </td>
-                                <td>
-                                    <span style="text-decoration:line-through;color:#64748b">$${o.originalPrice}</span>
-                                    <strong style="color:var(--primary)">$${o.discountPrice}</strong>
-                                </td>
-                                <td>${o.quantityLeft} / ${o.quantity}</td>
-                                <td>${o.pickupStart} - ${o.pickupEnd}</td>
-                                <td>
-                                    <span class="status ${o.quantityLeft > 0 ? 'status-active' : 'status-sold'}">
-                                        ${o.quantityLeft > 0 ? 'Activa' : 'Agotada'}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button onclick="deleteOffer(${i})" style="background:none;border:none;cursor:pointer;font-size:18px">🗑️</button>
-                                </td>
+                        ${orders.map(o => `
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px; font-weight: 600;">${o.pickup_code}</td>
+                                <td style="padding: 12px;">${o.user_name || 'Cliente'}</td>
+                                <td style="padding: 12px;">${o.offer_title || 'Oferta'}</td>
+                                <td style="padding: 12px; color: var(--primary); font-weight: 600;">$${o.total_price}</td>
+                                <td style="padding: 12px;"><span style="background: ${o.status === 'pending' ? '#fef3c7' : '#dcfce7'}; color: ${o.status === 'pending' ? '#d97706' : '#16a34a'}; padding: 4px 12px; border-radius: 12px; font-size: 12px;">${o.status === 'pending' ? 'Pendiente' : 'Entregado'}</span></td>
+                                <td style="padding: 12px;">${o.status === 'pending' ? `<button class="btn-small" style="background: var(--primary); color: white;" onclick="markDelivered('${o.id}')">Marcar entregado</button>` : '✅'}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -463,40 +699,48 @@
             `;
         }
 
-        function openModal() { document.getElementById('offerModal').classList.add('show'); }
-        function closeModal() { document.getElementById('offerModal').classList.remove('show'); document.getElementById('offerForm').reset(); }
-
-        function deleteOffer(index) {
-            if (confirm('¿Eliminar esta oferta?')) {
-                offers.splice(index, 1);
-                localStorage.setItem('pancomido_offers', JSON.stringify(offers));
-                renderOffers();
-            }
+        async function markDelivered(orderId) {
+            try {
+                if (useSupabase && supabase) {
+                    await supabase.from('orders').update({ status: 'completed' }).eq('id', orderId);
+                }
+            } catch (e) { }
+            loadOrders();
         }
 
-        document.getElementById('offerForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const offer = {
-                id: Date.now(),
-                title: document.getElementById('title').value,
-                description: document.getElementById('description').value,
-                originalPrice: parseInt(document.getElementById('originalPrice').value),
-                discountPrice: parseInt(document.getElementById('discountPrice').value),
-                quantity: parseInt(document.getElementById('quantity').value),
-                quantityLeft: parseInt(document.getElementById('quantity').value),
-                category: document.getElementById('category').value,
-                pickupStart: document.getElementById('pickupStart').value,
-                pickupEnd: document.getElementById('pickupEnd').value,
-                createdAt: new Date().toISOString()
-            };
-            offers.unshift(offer);
-            localStorage.setItem('pancomido_offers', JSON.stringify(offers));
-            closeModal();
-            renderOffers();
-            alert('✅ Oferta publicada exitosamente!');
-        });
+        function loadSettings() {
+            document.getElementById('restaurantName').value = restaurant.name;
+            document.getElementById('restaurantEmail').value = restaurant.email || '';
+            document.getElementById('restaurantPhone').value = restaurant.phone || '';
+            document.getElementById('restaurantAddress').value = restaurant.address || '';
+        }
 
-        renderOffers();
+        async function saveSettings(e) {
+            e.preventDefault();
+            restaurant = {
+                name: document.getElementById('restaurantName').value,
+                email: document.getElementById('restaurantEmail').value,
+                phone: document.getElementById('restaurantPhone').value,
+                address: document.getElementById('restaurantAddress').value
+            };
+            localStorage.setItem('pancomido_restaurant', JSON.stringify(restaurant));
+
+            try {
+                if (useSupabase && supabase) {
+                    const { data: existing } = await supabase.from('restaurants').select('id').eq('email', restaurant.email);
+                    if (existing && existing.length > 0) {
+                        await supabase.from('restaurants').update(restaurant).eq('email', restaurant.email);
+                    } else {
+                        await supabase.from('restaurants').insert([restaurant]);
+                    }
+                }
+            } catch (e) { }
+
+            alert('¡Datos guardados!');
+        }
+
+        // Init
+        loadDashboard();
     </script>
 </body>
 
