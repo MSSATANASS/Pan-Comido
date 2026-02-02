@@ -1264,17 +1264,34 @@
         // Main Logic
         async function loadOffers() {
             try {
-                if (supabase) {
-                    const { data, error } = await supabase.from('offers').select('*').eq('is_active', true).gt('quantity_left', 0);
-                    if (data) offers = data;
-                }
-            } catch (e) { }
+                // Timeout race: 2 seconds max
+                const fetchPromise = new Promise(async (resolve, reject) => {
+                    try {
+                        if (supabase) {
+                            const { data, error } = await supabase.from('offers').select('*').eq('is_active', true).gt('quantity_left', 0);
+                            if (error) reject(error);
+                            else resolve(data);
+                        } else {
+                            resolve(null);
+                        }
+                    } catch (e) { reject(e); }
+                });
 
-            // Fallback for demo if empty or error
-            if (!offers.length) {
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000));
+
+                const data = await Promise.race([fetchPromise, timeoutPromise]);
+
+                if (data && data.length > 0) {
+                    offers = data;
+                } else {
+                    throw new Error("No data");
+                }
+            } catch (e) {
+                console.log("Fallback:", e);
                 offers = [
                     { id: '1', title: 'Pizza Margherita', restaurant_name: 'Pizzería Don Carlo', discount_price: 60, original_price: 180, quantity_left: 5, pickup_start: '20:00', pickup_end: '21:00', image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'Pizza', description: 'Deliciosa pizza artesanal.' },
                     { id: '2', title: 'Pack Sorpresa', restaurant_name: 'La Panadería', discount_price: 45, original_price: 150, quantity_left: 10, pickup_start: '19:00', pickup_end: '20:00', image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400', category: 'Panadería', description: 'Surtido de pan dulce.' },
+                    { id: '3', title: 'Tacos Al Pastor', restaurant_name: 'El Tizoncito', discount_price: 80, original_price: 120, quantity_left: 3, pickup_start: '21:00', pickup_end: '22:00', image_url: 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=400', category: 'Tacos', description: 'Orden de 5 tacos con todo.' }
                 ];
             }
             renderOffers(offers);
