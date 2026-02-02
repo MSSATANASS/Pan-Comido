@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Restaurante - Pan Comido 🍕</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            padding: 24px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .sidebar-sub {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 32px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            color: #94a3b8;
+            border-radius: 12px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.15), transparent);
+            color: var(--primary);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 32px;
+            flex: 1;
+        }
+
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .dash-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .stat-card.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+        }
+
+        .stat-card.primary .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stat-change {
+            color: var(--primary);
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 14px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--primary);
+        }
+
+        .status-sold {
+            background: rgba(249, 115, 22, 0.15);
+            color: #f97316;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--border);
+        }
+
+        .modal h2 {
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px;
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-logo">🍕 Pan Comido</div>
+            <div class="sidebar-sub">Panel de Restaurante</div>
+            <nav>
+                <a class="nav-item active">📦 Mis Ofertas</a>
+                <a class="nav-item">🧾 Pedidos</a>
+                <a class="nav-item">📊 Estadísticas</a>
+                <a class="nav-item">⚙️ Configuración</a>
+                <a class="nav-item" href="index.html">🏠 Volver al inicio</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="dash-header">
+                <h1 class="dash-title">Panel de Restaurante</h1>
+                <button class="btn btn-primary" onclick="openModal()">+ Nueva Oferta</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card primary">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value">$1,250</div>
+                    <div class="stat-label">Ventas del día</div>
+                    <div class="stat-change">↑ 15% vs ayer</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🧾</div>
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Pedidos activos</div>
+                    <div class="stat-change">3 listos para recoger</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-value" id="activeOffers">0</div>
+                    <div class="stat-label">Ofertas activas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌱</div>
+                    <div class="stat-value">47 kg</div>
+                    <div class="stat-label">Comida rescatada</div>
+                    <div class="stat-change">Este mes</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Mis Ofertas</span>
+                    <button class="btn btn-secondary" onclick="openModal()">+ Agregar</button>
+                </div>
+                <div id="offersTable"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Nueva Oferta -->
+    <div class="modal-overlay" id="offerModal">
+        <div class="modal">
+            <h2>🍽️ Nueva Oferta</h2>
+            <form id="offerForm">
+                <div class="form-group">
+                    <label>Título de la oferta</label>
+                    <input type="text" id="title" placeholder="Ej: Caja Sorpresa del día" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="description" rows="3" placeholder="¿Qué incluye la oferta?"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio Original ($)</label>
+                        <input type="number" id="originalPrice" placeholder="150" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio con Descuento ($)</label>
+                        <input type="number" id="discountPrice" placeholder="45" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cantidad disponible</label>
+                        <input type="number" id="quantity" placeholder="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select id="category">
+                            <option value="🍞 Panadería">🍞 Panadería</option>
+                            <option value="🍽️ Restaurante">🍽️ Restaurante</option>
+                            <option value="☕ Café">☕ Café</option>
+                            <option value="🍔 Comida Rápida">🍔 Comida Rápida</option>
+                            <option value="🍣 Sushi">🍣 Sushi</option>
+                            <option value="🍕 Pizza">🍕 Pizza</option>
+                            <option value="🌮 Tacos">🌮 Tacos</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Hora inicio recogida</label>
+                        <input type="time" id="pickupStart" value="18:00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hora fin recogida</label>
+                        <input type="time" id="pickupEnd" value="21:00" required>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Publicar Oferta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let offers = JSON.parse(localStorage.getItem('pancomido_offers') || '[]');
+
+        function renderOffers() {
+            const container = document.getElementById('offersTable');
+            document.getElementById('activeOffers').textContent = offers.filter(o => o.quantityLeft > 0).length;
+
+            if (offers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <h3>No tienes ofertas aún</h3>
+                        <p>Crea tu primera oferta para empezar a vender</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Oferta</th>
+                            <th>Precio</th>
+                            <th>Disponibles</th>
+                            <th>Horario</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${offers.map((o, i) => `
+                            <tr>
+                                <td>
+                                    <strong>${o.title}</strong><br>
+                                    <small style="color:#64748b">${o.category}</small>
+                                </td>
+                                <td>
+                                    <span style="text-decoration:line-through;color:#64748b">$${o.originalPrice}</span>
+                                    <strong style="color:var(--primary)">$${o.discountPrice}</strong>
+                                </td>
+                                <td>${o.quantityLeft} / ${o.quantity}</td>
+                                <td>${o.pickupStart} - ${o.pickupEnd}</td>
+                                <td>
+                                    <span class="status ${o.quantityLeft > 0 ? 'status-active' : 'status-sold'}">
+                                        ${o.quantityLeft > 0 ? 'Activa' : 'Agotada'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button onclick="deleteOffer(${i})" style="background:none;border:none;cursor:pointer;font-size:18px">🗑️</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function openModal() { document.getElementById('offerModal').classList.add('show'); }
+        function closeModal() { document.getElementById('offerModal').classList.remove('show'); document.getElementById('offerForm').reset(); }
+
+        function deleteOffer(index) {
+            if (confirm('¿Eliminar esta oferta?')) {
+                offers.splice(index, 1);
+                localStorage.setItem('pancomido_offers', JSON.stringify(offers));
+                renderOffers();
+            }
+        }
+
+        document.getElementById('offerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const offer = {
+                id: Date.now(),
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                originalPrice: parseInt(document.getElementById('originalPrice').value),
+                discountPrice: parseInt(document.getElementById('discountPrice').value),
+                quantity: parseInt(document.getElementById('quantity').value),
+                quantityLeft: parseInt(document.getElementById('quantity').value),
+                category: document.getElementById('category').value,
+                pickupStart: document.getElementById('pickupStart').value,
+                pickupEnd: document.getElementById('pickupEnd').value,
+                createdAt: new Date().toISOString()
+            };
+            offers.unshift(offer);
+            localStorage.setItem('pancomido_offers', JSON.stringify(offers));
+            closeModal();
+            renderOffers();
+            alert('✅ Oferta publicada exitosamente!');
+        });
+
+        renderOffers();
+    </script>
+</body>
+
+</html>
