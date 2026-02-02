@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Pan Comido 🍕</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            color: var(--text-light);
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .contact-item {
+            padding: 24px;
+        }
+
+        .contact-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .contact-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .contact-value {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🍕 <span>Pan Comido</span></a>
+            <ul class="nav-menu">
+                <li><a href="index.html#como-funciona" class="nav-link">Cómo Funciona</a></li>
+                <li><a href="restaurant.html" class="nav-link">Para Restaurantes</a></li>
+                <li><a href="app.html" class="nav-link nav-cta">Probar App</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero" style="padding: 120px 20px 60px;">
+        <div class="container" style="text-align: center;">
+            <h1 class="hero-title"><span class="gradient-text">Contáctanos</span></h1>
+            <p class="hero-description" style="max-width: 600px; margin: 0 auto;">
+                ¿Tienes preguntas? ¿Quieres ser socio restaurante? ¡Escríbenos!
+            </p>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <div class="container">
+            <div class="contact-form">
+                <form id="contactForm" onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label>Tipo de consulta</label>
+                        <select name="type" required>
+                            <option value="">Selecciona una opción</option>
+                            <option value="restaurant">Quiero registrar mi restaurante</option>
+                            <option value="user">Soy usuario - tengo una duda</option>
+                            <option value="business">Propuesta de negocio</option>
+                            <option value="other">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre completo</label>
+                        <input type="text" name="name" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Correo electrónico</label>
+                        <input type="email" name="email" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono (opcional)</label>
+                        <input type="tel" name="phone" placeholder="+52 55 1234 5678">
+                    </div>
+                    <div class="form-group">
+                        <label>Mensaje</label>
+                        <textarea name="message" placeholder="¿En qué podemos ayudarte?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar mensaje</button>
+                </form>
+            </div>
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <div class="contact-label">Email</div>
+                    <div class="contact-value">hola@pancomido.mx</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📱</div>
+                    <div class="contact-label">WhatsApp</div>
+                    <div class="contact-value">+52 55 1234 5678</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-label">Ubicación</div>
+                    <div class="contact-value">Ciudad de México, México</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>🍕 Pan Comido</h3>
+                    <p>Rescatando comida, salvando el planeta.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Pan Comido. Hecho con 💚 en México.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function submitForm(e) {
+            e.preventDefault();
+            alert('¡Gracias por tu mensaje! Te contactaremos pronto.');
+            e.target.reset();
+        }
+    </script>
+</body>
+
+</html>
