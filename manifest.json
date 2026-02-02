@@ -8,12 +8,12 @@
     "description": "Rescata comida, ahorra dinero y ayuda al planeta.",
     "icons": [
         {
-            "src": "https://img.icons8.com/color/192/pizza.png",
+            "src": "logo.png",
             "type": "image/png",
             "sizes": "192x192"
         },
         {
-            "src": "https://img.icons8.com/color/512/pizza.png",
+            "src": "logo.png",
             "type": "image/png",
             "sizes": "512x512"
         }
