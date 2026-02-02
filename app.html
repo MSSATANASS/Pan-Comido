@@ -3,8 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pan Comido App</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#22c55e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -25,6 +29,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -36,11 +41,12 @@
 
         .phone-frame {
             width: 100%;
-            max-width: 390px;
+            max-width: 450px;
             background: var(--bg);
             min-height: 100vh;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
         }
 
         .screen {
@@ -61,11 +67,13 @@
             align-items: center;
             text-align: center;
             color: white;
+            animation: fadeIn 0.5s;
         }
 
         .login-logo {
             font-size: 80px;
             margin-bottom: 16px;
+            animation: bounce 2s infinite;
         }
 
         .login-title {
@@ -95,6 +103,13 @@
             border-radius: 12px;
             font-size: 16px;
             background: rgba(255, 255, 255, 0.9);
+            transition: transform 0.2s;
+        }
+
+        .input-group input:focus {
+            transform: scale(1.02);
+            outline: none;
+            background: white;
         }
 
         .btn-login {
@@ -108,6 +123,12 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .btn-login:active {
+            transform: scale(0.96);
         }
 
         .login-divider {
@@ -119,6 +140,7 @@
             background: transparent;
             border: 2px solid white;
             color: white;
+            box-shadow: none;
         }
 
         /* Header */
@@ -128,6 +150,7 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .header-top {
@@ -165,9 +188,10 @@
         .categories {
             display: flex;
             gap: 12px;
-            padding: 0 20px 16px;
+            padding: 16px 20px;
             overflow-x: auto;
             scrollbar-width: none;
+            background: white;
         }
 
         .categories::-webkit-scrollbar {
@@ -175,8 +199,8 @@
         }
 
         .cat-chip {
-            padding: 10px 20px;
-            background: white;
+            padding: 8px 20px;
+            background: #f8fafc;
             border-radius: 25px;
             white-space: nowrap;
             font-size: 14px;
@@ -191,6 +215,8 @@
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
         }
 
         /* Feed */
@@ -198,13 +224,14 @@
             flex: 1;
             overflow-y: auto;
             padding: 0 20px 100px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 16px 0;
+            margin: 20px 0 12px;
         }
 
         .section-title {
@@ -216,6 +243,7 @@
             color: var(--primary);
             font-size: 14px;
             font-weight: 600;
+            cursor: pointer;
         }
 
         /* Offer Card */
@@ -223,10 +251,11 @@
             background: white;
             border-radius: 16px;
             overflow: hidden;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
             cursor: pointer;
             transition: transform 0.2s;
+            position: relative;
         }
 
         .offer-card:active {
@@ -234,7 +263,7 @@
         }
 
         .offer-img {
-            height: 140px;
+            height: 160px;
             background-size: cover;
             background-position: center;
             position: relative;
@@ -250,6 +279,7 @@
             font-size: 12px;
             font-weight: 600;
             color: var(--orange);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .offer-discount {
@@ -262,6 +292,7 @@
             border-radius: 8px;
             font-size: 12px;
             font-weight: 700;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
         }
 
         .offer-content {
@@ -278,6 +309,8 @@
         .offer-name {
             font-weight: 700;
             font-size: 16px;
+            width: 70%;
+            line-height: 1.3;
         }
 
         .offer-rating {
@@ -285,12 +318,19 @@
             align-items: center;
             gap: 4px;
             font-size: 14px;
+            background: #fffbeb;
+            color: #d97706;
+            padding: 2px 8px;
+            border-radius: 6px;
         }
 
         .offer-restaurant {
             color: var(--text-secondary);
             font-size: 13px;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .offer-time {
@@ -299,18 +339,22 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            background: #f0fdf4;
+            padding: 4px 8px;
+            border-radius: 6px;
+            width: fit-content;
         }
 
         .offer-price {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .price-new {
             font-size: 20px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--primary);
         }
 
@@ -323,13 +367,20 @@
         /* Detail Screen */
         .detail-screen {
             background: white;
+            z-index: 50;
         }
 
         .detail-header {
-            height: 220px;
+            height: 260px;
             background-size: cover;
             background-position: center;
             position: relative;
+        }
+
+        .detail-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
         }
 
         .detail-back {
@@ -345,13 +396,18 @@
             justify-content: center;
             font-size: 20px;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10;
         }
 
         .detail-content {
             padding: 24px;
             flex: 1;
             overflow-y: auto;
+            border-radius: 24px 24px 0 0;
+            margin-top: -24px;
+            background: white;
+            position: relative;
         }
 
         .detail-badges {
@@ -373,29 +429,25 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 4px;
+            line-height: 1.2;
         }
 
         .detail-restaurant {
             color: var(--text-secondary);
             margin-bottom: 16px;
-        }
-
-        .detail-rating {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
+            font-size: 15px;
         }
 
         .detail-desc {
             color: var(--text-secondary);
             line-height: 1.6;
             margin-bottom: 24px;
+            font-size: 14px;
         }
 
         .detail-info {
             background: #f8fafc;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 16px;
             margin-bottom: 24px;
         }
@@ -403,20 +455,27 @@
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 12px 0;
             border-bottom: 1px solid var(--border);
         }
 
         .info-row:last-child {
             border: none;
+            padding-bottom: 0;
+        }
+
+        .info-row:first-child {
+            padding-top: 0;
         }
 
         .info-label {
             color: var(--text-secondary);
+            font-size: 14px;
         }
 
         .info-value {
             font-weight: 600;
+            font-size: 14px;
         }
 
         .quantity-selector {
@@ -425,30 +484,37 @@
             justify-content: center;
             gap: 20px;
             margin-bottom: 24px;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 16px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .qty-btn {
-            width: 44px;
-            height: 44px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            border: 2px solid var(--border);
+            border: none;
             background: white;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .qty-btn.active {
-            border-color: var(--primary);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             color: var(--primary);
         }
 
+        .qty-btn:active {
+            transform: scale(0.9);
+        }
+
         .qty-value {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            min-width: 40px;
+            min-width: 30px;
             text-align: center;
         }
 
@@ -459,6 +525,7 @@
             display: flex;
             gap: 16px;
             align-items: center;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
         }
 
         .detail-total {
@@ -481,10 +548,16 @@
             color: white;
             border: none;
             padding: 16px 32px;
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .btn-reserve:active {
+            transform: scale(0.96);
         }
 
         /* Orders */
@@ -492,6 +565,9 @@
             padding: 20px;
             background: white;
             border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .orders-title {
@@ -499,29 +575,11 @@
             font-weight: 700;
         }
 
-        .orders-tabs {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .order-tab {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            background: #f1f5f9;
-            cursor: pointer;
-        }
-
-        .order-tab.active {
-            background: var(--primary);
-            color: white;
-        }
-
         .orders-list {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
+            padding-bottom: 100px;
         }
 
         .order-card {
@@ -529,7 +587,8 @@
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
         }
 
         .order-top {
@@ -540,13 +599,15 @@
 
         .order-restaurant {
             font-weight: 600;
+            color: var(--text);
         }
 
         .order-status {
             padding: 4px 10px;
             border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .status-pending {
@@ -566,23 +627,46 @@
         }
 
         .order-code {
-            background: var(--primary);
-            color: white;
+            background: #f8fafc;
+            border: 2px dashed var(--primary);
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 12px;
             text-align: center;
-            margin-top: 12px;
+            margin-top: 16px;
+            position: relative;
+            overflow: hidden;
         }
 
         .code-label {
-            font-size: 12px;
-            opacity: 0.8;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
         }
 
         .code-value {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 4px;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 6px;
+            color: var(--primary);
+        }
+
+        .btn-whatsapp {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            margin-top: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
         }
 
         /* Profile */
@@ -591,11 +675,13 @@
             padding: 40px 24px;
             text-align: center;
             color: white;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 20px;
         }
 
         .profile-avatar {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             background: white;
             margin: 0 auto 16px;
@@ -603,11 +689,13 @@
             align-items: center;
             justify-content: center;
             font-size: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         .profile-name {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
+            margin-bottom: 4px;
         }
 
         .profile-email {
@@ -618,8 +706,12 @@
         .profile-stats {
             display: flex;
             justify-content: center;
-            gap: 40px;
+            gap: 30px;
             margin-top: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            border-radius: 16px;
+            backdrop-filter: blur(5px);
         }
 
         .profile-stat {
@@ -627,54 +719,19 @@
         }
 
         .stat-number {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
         }
 
         .stat-label {
-            font-size: 12px;
-            opacity: 0.8;
+            font-size: 11px;
+            opacity: 0.9;
         }
 
         .profile-content {
             flex: 1;
             overflow-y: auto;
-            padding: 24px;
-        }
-
-        .profile-section {
-            margin-bottom: 24px;
-        }
-
-        .section-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px;
-            background: white;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-
-        .menu-icon {
-            font-size: 24px;
-        }
-
-        .menu-label {
-            flex: 1;
-            font-weight: 500;
-        }
-
-        .menu-arrow {
-            color: var(--text-secondary);
+            padding: 0 24px 100px;
         }
 
         /* Bottom Nav */
@@ -682,12 +739,13 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-            max-width: 390px;
+            max-width: 450px;
             background: white;
             display: flex;
-            padding: 12px 0 20px;
+            padding: 12px 0 24px;
             border-top: 1px solid var(--border);
             z-index: 100;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
         }
 
         .nav-item {
@@ -695,19 +753,25 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            color: var(--text-secondary);
-            font-size: 11px;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 500;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: all 0.2s;
         }
 
         .nav-item.active {
             color: var(--primary);
         }
 
+        .nav-item.active .nav-icon {
+            transform: translateY(-2px);
+        }
+
         .nav-icon {
             font-size: 24px;
+            transition: transform 0.2s;
         }
 
         /* Modal */
@@ -718,10 +782,12 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s;
         }
 
         .modal-overlay.show {
@@ -730,46 +796,44 @@
 
         .modal {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 32px;
             text-align: center;
             margin: 20px;
-            max-width: 340px;
+            width: 90%;
+            max-width: 360px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            animation: popIn 0.3s forwards;
         }
 
         .modal-icon {
             font-size: 60px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
         }
 
         .modal-title {
             font-size: 24px;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 8px;
+            color: var(--text);
         }
 
         .modal-desc {
             color: var(--text-secondary);
             margin-bottom: 24px;
+            font-size: 15px;
         }
 
         .modal-code {
-            background: var(--primary);
-            color: white;
+            background: #f0fdf4;
+            color: var(--primary);
             padding: 16px;
-            border-radius: 12px;
+            border-radius: 16px;
             margin-bottom: 24px;
-        }
-
-        .modal-code-label {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .modal-code-value {
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: 4px;
+            border: 2px dashed var(--primary);
         }
 
         .modal-btn {
@@ -778,33 +842,156 @@
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        /* Install PWA Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: #1e293b;
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s;
+        }
+
+        .install-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .install-icon {
+            font-size: 24px;
+        }
+
+        .install-text div:first-child {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .install-text div:last-child {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .btn-install {
+            background: var(--primary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-close-install {
+            background: transparent;
+            border: none;
+            color: white;
+            opacity: 0.5;
+            font-size: 20px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes popIn {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .loading {
             text-align: center;
             padding: 40px;
             color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s infinite;
         }
 
-        .empty-icon {
-            font-size: 60px;
-            margin-bottom: 16px;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="phone-frame">
+        <!-- Install Prompt -->
+        <div class="install-prompt" id="installPrompt">
+            <div class="install-content">
+                <div class="install-icon">📲</div>
+                <div class="install-text">
+                    <div>Instalar App</div>
+                    <div>Para una mejor experiencia</div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <button class="btn-install" onclick="installPWA()">Instalar</button>
+                <button class="btn-close-install" onclick="closeInstall()">×</button>
+            </div>
+        </div>
+
         <!-- Login Screen -->
         <div class="screen login-screen active" id="loginScreen">
             <div class="login-logo">🍕</div>
@@ -829,26 +1016,28 @@
                 <div class="header-top">
                     <div class="location">📍 CDMX ▾</div>
                     <div class="header-icons">
-                        <span>🔔</span>
+                        <span onclick="loadOffers()">🔄</span>
                         <span onclick="showScreen('profileScreen')">👤</span>
                     </div>
                 </div>
-                <div class="search-bar">🔍 Buscar comida, restaurantes...</div>
+                <div class="search-bar">🔍 Buscar comida...</div>
             </div>
             <div class="categories">
                 <div class="cat-chip active" data-cat="all">🍽️ Todo</div>
                 <div class="cat-chip" data-cat="Pizza">🍕 Pizza</div>
                 <div class="cat-chip" data-cat="Sushi">🍣 Sushi</div>
-                <div class="cat-chip" data-cat="Panadería">🍞 Panadería</div>
+                <div class="cat-chip" data-cat="Panadería">🍞 Pan</div>
                 <div class="cat-chip" data-cat="Tacos">🌮 Tacos</div>
             </div>
             <div class="feed">
                 <div class="section-header">
-                    <span class="section-title">🔥 Ofertas disponibles</span>
-                    <span class="see-all" onclick="loadOffers()">Actualizar</span>
+                    <span class="section-title">🔥 Ofertas hoy</span>
+                    <span class="see-all" onclick="loadOffers()">Ver todo</span>
                 </div>
                 <div id="offersList">
-                    <div class="loading">Cargando ofertas...</div>
+                    <div class="loading">
+                        <div class="spinner"></div>Cargando...
+                    </div>
                 </div>
             </div>
             <div class="bottom-nav">
@@ -865,6 +1054,7 @@
         <!-- Offer Detail Screen -->
         <div class="screen detail-screen" id="detailScreen">
             <div class="detail-header" id="detailImg">
+                <div class="detail-overlay"></div>
                 <div class="detail-back" onclick="showScreen('homeScreen')">←</div>
             </div>
             <div class="detail-content">
@@ -887,7 +1077,7 @@
                 <div class="quantity-selector">
                     <button class="qty-btn" onclick="changeQty(-1)">−</button>
                     <span class="qty-value" id="qtyValue">1</span>
-                    <button class="qty-btn active" onclick="changeQty(1)">+</button>
+                    <button class="qty-btn" onclick="changeQty(1)">+</button>
                 </div>
             </div>
             <div class="detail-footer">
@@ -905,7 +1095,9 @@
                 <h1 class="orders-title">Mis Pedidos</h1>
             </div>
             <div class="orders-list" id="ordersList">
-                <div class="loading">Cargando pedidos...</div>
+                <div class="loading">
+                    <div class="spinner"></div>Cargando...
+                </div>
             </div>
             <div class="bottom-nav">
                 <div class="nav-item" onclick="showScreen('homeScreen')"><span
@@ -933,24 +1125,27 @@
                         <div class="stat-number" id="userSaved">$0</div>
                         <div class="stat-label">Ahorrado</div>
                     </div>
-                    <div class="profile-stat">
-                        <div class="stat-number" id="userKg">0 kg</div>
-                        <div class="stat-label">Rescatado</div>
-                    </div>
                 </div>
             </div>
             <div class="profile-content">
-                <div class="profile-section">
-                    <div class="section-label">Cuenta</div>
-                    <div class="menu-item"><span class="menu-icon">📝</span><span class="menu-label">Editar
-                            perfil</span><span class="menu-arrow">→</span></div>
-                    <div class="menu-item"><span class="menu-icon">💳</span><span class="menu-label">Métodos de
-                            pago</span><span class="menu-arrow">→</span></div>
+                <div style="background: white; border-radius: 16px; overflow: hidden; margin-bottom: 20px;">
+                    <div
+                        style="padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                        <span>🔔 Notificaciones</span>
+                        <span style="color: var(--primary);">Activado</span>
+                    </div>
+                    <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+                        <span>💳 Métodos de pago</span>
+                    </div>
+                    <div style="padding: 16px;">
+                        <span>❓ Ayuda y Soporte</span>
+                    </div>
                 </div>
-                <div class="profile-section">
-                    <div class="menu-item" onclick="logout()" style="color: #ef4444;"><span
-                            class="menu-icon">🚪</span><span class="menu-label">Cerrar sesión</span><span
-                            class="menu-arrow">→</span></div>
+                <button onclick="logout()"
+                    style="width: 100%; padding: 16px; background: white; border: 1px solid #fee2e2; color: #ef4444; border-radius: 16px; font-weight: 600;">Cerrar
+                    sesión</button>
+                <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #94a3b8;">
+                    Pan Comido v1.0.2<br>Hecho con ❤️ en México
                 </div>
             </div>
             <div class="bottom-nav">
@@ -968,14 +1163,17 @@
     <!-- Success Modal -->
     <div class="modal-overlay" id="successModal">
         <div class="modal">
-            <div class="modal-icon">🎉</div>
-            <h2 class="modal-title">¡Reserva exitosa!</h2>
-            <p class="modal-desc">Muestra este código en el restaurante</p>
+            <span class="modal-icon">🎉</span>
+            <h2 class="modal-title">¡Reservado!</h2>
+            <p class="modal-desc">Muestra este código al recoger.</p>
             <div class="modal-code">
-                <div class="modal-code-label">Código de recogida</div>
+                <div class="modal-code-label">CÓDIGO DE RECOGIDA</div>
                 <div class="modal-code-value" id="pickupCode">ABC123</div>
             </div>
             <button class="modal-btn" onclick="closeModal()">Ver mis pedidos</button>
+            <a href="#" id="waLink" target="_blank" class="btn-whatsapp">
+                <span>💬</span> Confirmar por WhatsApp
+            </a>
         </div>
     </div>
 
@@ -984,18 +1182,36 @@
         const SUPABASE_URL = 'https://hyqaalkyposwzrvinbtv.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5cWFhbGt5cG9zd3pydmluYnR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg0OTk2MjgsImV4cCI6MjA1NDA3NTYyOH0.placeholder';
 
-        // Initialize Supabase (will fallback to localStorage if not available)
-        let supabase = null;
-        let useSupabase = false;
+        // PWA Install Logic
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').style.display = 'flex';
+        });
 
+        async function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('installPrompt').style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        }
+
+        function closeInstall() {
+            document.getElementById('installPrompt').style.display = 'none';
+        }
+
+        // Initialize Supabase
+        let supabase = null;
         try {
             if (window.supabase) {
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                useSupabase = true;
             }
-        } catch (e) {
-            console.log('Using localStorage fallback');
-        }
+        } catch (e) { }
 
         // State
         let currentUser = JSON.parse(localStorage.getItem('pancomido_user') || 'null');
@@ -1003,17 +1219,23 @@
         let currentOffer = null;
         let quantity = 1;
 
-        // Demo offers (fallback)
-        const demoOffers = [
-            { id: '1', title: 'Pizza Margherita Familiar', restaurant_name: 'Pizzería Don Carlo', discount_price: 60, original_price: 180, quantity_left: 5, pickup_start: '20:00', pickup_end: '21:00', image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'Pizza', description: 'Pizza de masa artesanal con tomate y mozzarella' },
-            { id: '2', title: 'Combo Sushi Premium', restaurant_name: 'Sushi Zen', discount_price: 85, original_price: 250, quantity_left: 8, pickup_start: '21:00', pickup_end: '22:00', image_url: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400', category: 'Sushi', description: '12 piezas variadas de sushi premium' },
-            { id: '3', title: 'Caja Sorpresa Panadería', restaurant_name: 'La Panadería del Centro', discount_price: 45, original_price: 150, quantity_left: 10, pickup_start: '19:00', pickup_end: '20:00', image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400', category: 'Panadería', description: 'Pan dulce y salado variado del día' },
-        ];
-
-        // Functions
+        // Navigation
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            // Highlight nav
+            const navMap = {
+                'homeScreen': 0, 'ordersScreen': 2, 'profileScreen': 3
+            };
+            if (navMap[screenId] !== undefined) {
+                const navs = document.querySelectorAll('.bottom-nav'); // There are multiple bottom-navs (one per screen)
+                navs.forEach(nav => {
+                    const items = nav.querySelectorAll('.nav-item');
+                    if (items[navMap[screenId]]) items[navMap[screenId]].classList.add('active');
+                });
+            }
+
             if (screenId === 'homeScreen') loadOffers();
             if (screenId === 'ordersScreen') loadOrders();
             if (screenId === 'profileScreen') updateProfile();
@@ -1039,35 +1261,32 @@
             showScreen('loginScreen');
         }
 
+        // Main Logic
         async function loadOffers() {
-            const container = document.getElementById('offersList');
-            container.innerHTML = '<div class="loading">Cargando ofertas...</div>';
-
             try {
-                if (useSupabase && supabase) {
+                if (supabase) {
                     const { data, error } = await supabase.from('offers').select('*').eq('is_active', true).gt('quantity_left', 0);
-                    if (!error && data && data.length > 0) {
-                        offers = data;
-                    } else {
-                        offers = demoOffers;
-                    }
-                } else {
-                    offers = demoOffers;
+                    if (data) offers = data;
                 }
-            } catch (e) {
-                offers = demoOffers;
-            }
+            } catch (e) { }
 
+            // Fallback for demo if empty or error
+            if (!offers.length) {
+                offers = [
+                    { id: '1', title: 'Pizza Margherita', restaurant_name: 'Pizzería Don Carlo', discount_price: 60, original_price: 180, quantity_left: 5, pickup_start: '20:00', pickup_end: '21:00', image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', category: 'Pizza', description: 'Deliciosa pizza artesanal.' },
+                    { id: '2', title: 'Pack Sorpresa', restaurant_name: 'La Panadería', discount_price: 45, original_price: 150, quantity_left: 10, pickup_start: '19:00', pickup_end: '20:00', image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400', category: 'Panadería', description: 'Surtido de pan dulce.' },
+                ];
+            }
             renderOffers(offers);
         }
 
-        function renderOffers(offersToRender) {
+        function renderOffers(list) {
             const container = document.getElementById('offersList');
-            if (offersToRender.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🍽️</div><h3>No hay ofertas disponibles</h3><p>Vuelve más tarde</p></div>';
+            if (list.length === 0) {
+                container.innerHTML = '<div class="loading">No hay ofertas disponibles :(</div>';
                 return;
             }
-            container.innerHTML = offersToRender.map(o => {
+            container.innerHTML = list.map(o => {
                 const discount = Math.round((1 - o.discount_price / o.original_price) * 100);
                 return `
                 <div class="offer-card" onclick="showOffer('${o.id}')">
@@ -1078,10 +1297,10 @@
                     <div class="offer-content">
                         <div class="offer-header">
                             <span class="offer-name">${o.title}</span>
-                            <span class="offer-rating">⭐ 4.8</span>
+                            <div class="offer-rating">★ 4.8</div>
                         </div>
-                        <div class="offer-restaurant">${o.restaurant_name}</div>
-                        <div class="offer-time">🕒 Recoger ${o.pickup_start} - ${o.pickup_end}</div>
+                        <div class="offer-restaurant">🏪 ${o.restaurant_name}</div>
+                        <div class="offer-time">🕒 ${o.pickup_start} - ${o.pickup_end}</div>
                         <div class="offer-price">
                             <span class="price-new">$${o.discount_price}</span>
                             <span class="price-old">$${o.original_price}</span>
@@ -1092,7 +1311,7 @@
         }
 
         function showOffer(id) {
-            currentOffer = offers.find(o => o.id === id || o.id === parseInt(id));
+            currentOffer = offers.find(o => o.id == id);
             if (!currentOffer) return;
 
             quantity = 1;
@@ -1103,7 +1322,7 @@
             document.getElementById('detailRestaurant').textContent = currentOffer.restaurant_name;
             document.getElementById('detailDesc').textContent = currentOffer.description || '';
             document.getElementById('detailTime').textContent = `${currentOffer.pickup_start} - ${currentOffer.pickup_end}`;
-            document.getElementById('detailStock').textContent = `${currentOffer.quantity_left} unidades`;
+            document.getElementById('detailStock').textContent = `${currentOffer.quantity_left} disponibles`;
             document.getElementById('detailDiscount').textContent = `-${discount}%`;
             document.getElementById('qtyValue').textContent = '1';
             updatePrice();
@@ -1112,7 +1331,7 @@
 
         function changeQty(delta) {
             const newQty = quantity + delta;
-            if (newQty >= 1 && newQty <= currentOffer.quantity_left) {
+            if (newQty >= 1 && newQty <= (currentOffer.quantity_left || 10)) {
                 quantity = newQty;
                 document.getElementById('qtyValue').textContent = quantity;
                 updatePrice();
@@ -1129,8 +1348,8 @@
                 offer_id: currentOffer.id,
                 offer_title: currentOffer.title,
                 restaurant_name: currentOffer.restaurant_name,
-                user_email: currentUser?.email || 'demo@pancomido.mx',
-                user_name: currentUser?.name || 'Usuario',
+                user_email: currentUser?.email,
+                user_name: currentUser?.name,
                 quantity: quantity,
                 total_price: currentOffer.discount_price * quantity,
                 saved: (currentOffer.original_price - currentOffer.discount_price) * quantity,
@@ -1141,21 +1360,25 @@
             };
 
             try {
-                if (useSupabase && supabase) {
+                if (supabase) {
                     await supabase.from('orders').insert([order]);
-                    // Update offer quantity
-                    await supabase.from('offers').update({ quantity_left: currentOffer.quantity_left - quantity }).eq('id', currentOffer.id);
+                    // Update stock logic would go here ideally via RPC
                 }
-            } catch (e) {
-                console.log('Using localStorage fallback');
-            }
+            } catch (e) { }
 
-            // Also save to localStorage
+            // Save local
             let orders = JSON.parse(localStorage.getItem('pancomido_orders') || '[]');
-            orders.unshift({ ...order, id: Date.now(), created_at: new Date().toISOString() });
+            orders.unshift({ ...order, created_at: new Date().toISOString() });
             localStorage.setItem('pancomido_orders', JSON.stringify(orders));
 
+            // Setup Modal
             document.getElementById('pickupCode').textContent = code;
+
+            // WhatsApp Link Generator
+            const msg = `Hola ${currentOffer.restaurant_name}, reservé *${quantity}x ${currentOffer.title}* en Pan Comido. Mi código es *${code}*. Voy a recogerlo.`;
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            document.getElementById('waLink').href = waUrl;
+
             document.getElementById('successModal').classList.add('show');
         }
 
@@ -1169,34 +1392,39 @@
             let orders = [];
 
             try {
-                if (useSupabase && supabase && currentUser) {
+                if (supabase && currentUser) {
                     const { data } = await supabase.from('orders').select('*').eq('user_email', currentUser.email).order('created_at', { ascending: false });
                     if (data) orders = data;
                 }
             } catch (e) { }
 
-            // Merge with localStorage
+            // Merge local (for speed/offline)
             const localOrders = JSON.parse(localStorage.getItem('pancomido_orders') || '[]');
-            orders = [...orders, ...localOrders].reduce((acc, o) => {
-                if (!acc.find(x => x.pickup_code === o.pickup_code)) acc.push(o);
-                return acc;
-            }, []);
+            const orderMap = new Map();
+            [...orders, ...localOrders].forEach(o => orderMap.set(o.pickup_code, o));
+            const finalOrders = Array.from(orderMap.values()).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-            if (orders.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🧾</div><h3>Sin pedidos aún</h3><p>Tus pedidos aparecerán aquí</p></div>';
+            if (finalOrders.length === 0) {
+                container.innerHTML = '<div class="loading">No tienes pedidos activos.</div>';
                 return;
             }
 
-            container.innerHTML = orders.map(o => `
+            container.innerHTML = finalOrders.map(o => `
                 <div class="order-card">
                     <div class="order-top">
                         <span class="order-restaurant">${o.restaurant_name}</span>
                         <span class="order-status ${o.status === 'pending' ? 'status-pending' : 'status-completed'}">${o.status === 'pending' ? 'Pendiente' : 'Completado'}</span>
                     </div>
-                    <div class="order-item">${o.quantity}x ${o.offer_title}</div>
-                    <div class="order-item">🕒 Recoger: ${o.pickup_time}</div>
-                    <div class="order-item" style="font-weight: 600;">Total: $${o.total_price} (Ahorraste $${o.saved})</div>
-                    ${o.status === 'pending' ? `<div class="order-code"><div class="code-label">Código de recogida</div><div class="code-value">${o.pickup_code}</div></div>` : ''}
+                    <div class="order-item">🛍️ ${o.quantity}x ${o.offer_title}</div>
+                    <div class="order-item">💰 Total: <b>$${o.total_price}</b></div>
+                    <div class="order-code">
+                        <div class="code-label">Código de entrega</div>
+                        <div class="code-value">${o.pickup_code}</div>
+                    </div>
+                    ${o.status === 'pending' ? `
+                    <a href="https://wa.me/?text=${encodeURIComponent(`Hola, voy por mi pedido ${o.pickup_code} de ${o.offer_title}.`)}" target="_blank" class="btn-whatsapp" style="margin-top:16px;">
+                        <span>💬</span> Contactar Restaurante
+                    </a>` : ''}
                 </div>
             `).join('');
         }
@@ -1210,24 +1438,9 @@
             const totalSaved = orders.reduce((sum, o) => sum + (o.saved || 0), 0);
             document.getElementById('userOrders').textContent = orders.length;
             document.getElementById('userSaved').textContent = '$' + totalSaved;
-            document.getElementById('userKg').textContent = (orders.length * 0.5).toFixed(1) + ' kg';
         }
 
-        // Category filter
-        document.querySelectorAll('.cat-chip').forEach(chip => {
-            chip.addEventListener('click', function () {
-                document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                const cat = this.dataset.cat;
-                if (cat === 'all') {
-                    renderOffers(offers);
-                } else {
-                    renderOffers(offers.filter(o => o.category === cat));
-                }
-            });
-        });
-
-        // Auto-login if user exists
+        // Auto-login
         if (currentUser) {
             showScreen('homeScreen');
         }

@@ -1,0 +1,23 @@
+{
+    "name": "Pan Comido",
+    "short_name": "Pan Comido",
+    "start_url": "/Pan-Comido/app.html",
+    "display": "standalone",
+    "background_color": "#1e293b",
+    "theme_color": "#22c55e",
+    "description": "Rescata comida, ahorra dinero y ayuda al planeta.",
+    "icons": [
+        {
+            "src": "https://img.icons8.com/color/192/pizza.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "https://img.icons8.com/color/512/pizza.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "orientation": "portrait",
+    "scope": "/Pan-Comido/"
+}
