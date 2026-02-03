@@ -5,326 +5,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Pan Comido 🍕</title>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        .dashboard {
-            display: flex;
-            min-height: 100vh;
-        }
 
-        .sidebar {
-            width: 260px;
-            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-            padding: 24px;
-            position: fixed;
-            height: 100vh;
-        }
+    <!-- Config & Utilities -->
+    <script src="config.js"></script>
 
-        .sidebar-logo {
-            font-size: 24px;
-            color: var(--primary);
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .sidebar-sub {
-            color: #64748b;
-            font-size: 12px;
-            margin-bottom: 32px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            color: #94a3b8;
-            border-radius: 12px;
-            margin-bottom: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-
-        .nav-item:hover,
-        .nav-item.active {
-            background: linear-gradient(90deg, rgba(34, 197, 94, 0.15), transparent);
-            color: var(--primary);
-        }
-
-        .main-content {
-            margin-left: 260px;
-            padding: 32px;
-            flex: 1;
-        }
-
-        .dash-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-
-        .dash-title {
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .dash-date {
-            color: #64748b;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-        }
-
-        .stat-card.primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-        }
-
-        .stat-card.primary .stat-label {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .stat-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        .stat-highlight {
-            color: var(--primary);
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            text-align: left;
-            padding: 14px;
-            color: #64748b;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border);
-        }
-
-        td {
-            padding: 16px 14px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .status {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-active {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--primary);
-        }
-
-        .status-pending {
-            background: rgba(249, 115, 22, 0.15);
-            color: #f97316;
-        }
-
-        .restaurant-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .restaurant-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            background: #1e293b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .restaurant-info {
-            flex: 1;
-        }
-
-        .restaurant-name {
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .restaurant-stats {
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        .restaurant-revenue {
-            text-align: right;
-        }
-
-        .restaurant-revenue-value {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .restaurant-revenue-label {
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        .commission {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        @media (max-width: 1200px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .sidebar {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
+    <!-- Styles -->
+    <link rel="stylesheet" href="admin.css">
 </head>
 
 <body>
     <div class="dashboard">
-        <aside class="sidebar">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" role="navigation" aria-label="Navegación administrativa">
             <div class="sidebar-logo">🍕 Pan Comido</div>
-            <div class="sidebar-sub">Administración</div>
+            <div class="sidebar-sub">Panel de Administración</div>
             <nav>
-                <a class="nav-item active">📊 Dashboard</a>
-                <a class="nav-item">🏪 Restaurantes</a>
-                <a class="nav-item">📦 Ofertas</a>
-                <a class="nav-item">🧾 Pedidos</a>
-                <a class="nav-item">👥 Clientes</a>
-                <a class="nav-item">💰 Finanzas</a>
-                <a class="nav-item">⚙️ Configuración</a>
+                <button class="nav-item active" aria-current="page">📊 Dashboard</button>
+                <button class="nav-item">🏪 Restaurantes</button>
+                <button class="nav-item">📦 Ofertas</button>
+                <button class="nav-item">🧾 Pedidos</button>
+                <button class="nav-item">👥 Clientes</button>
+                <button class="nav-item">💰 Finanzas</button>
+                <button class="nav-item">⚙️ Configuración</button>
                 <a class="nav-item" href="index.html">🏠 Volver al inicio</a>
             </nav>
         </aside>
 
+        <!-- Main Content Area -->
         <main class="main-content">
-            <div class="dash-header">
-                <h1 class="dash-title">Dashboard</h1>
+            <header class="dash-header">
+                <h1 class="dash-title">Dashboard General</h1>
                 <div class="dash-controls">
                     <span class="dash-date" id="currentDate"></span>
-                    <button class="btn btn-primary" onclick="loadData()"
-                        style="padding: 8px 16px; margin-left: 12px;">🔄 Actualizar</button>
+                    <button class="btn btn-primary" onclick="loadData()" aria-label="Actualizar datos">
+                        🔄 Actualizar
+                    </button>
                 </div>
-            </div>
+            </header>
 
             <div class="stats-grid">
-                <div class="stat-card primary">
-                    <div class="stat-icon">💰</div>
+                <article class="stat-card primary">
+                    <div class="stat-icon" aria-hidden="true">💰</div>
                     <div class="stat-value" id="totalRevenue">$0</div>
-                    <div class="stat-label">Ingresos Totales</div>
-                    <div class="stat-highlight" style="color: white; font-weight: 600;">Comisión (25%): <span
-                            id="totalCommission">$0</span></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🧾</div>
+                    <p class="stat-label">Ingresos Totales (Bruto)</p>
+                    <div class="stat-highlight">Comisión acumulada: <span id="totalCommission"
+                            style="font-weight: 700;">$0</span></div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-icon" aria-hidden="true">🧾</div>
                     <div class="stat-value" id="totalOrders">0</div>
-                    <div class="stat-label">Pedidos Totales</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🏪</div>
+                    <p class="stat-label">Pedidos Totales</p>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-icon" aria-hidden="true">🏪</div>
                     <div class="stat-value" id="activeRestaurants">0</div>
-                    <div class="stat-label">Restaurantes Activos</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🌱</div>
+                    <p class="stat-label">Restaurantes Activos</p>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-icon" aria-hidden="true">🌱</div>
                     <div class="stat-value" id="foodSaved">0 kg</div>
-                    <div class="stat-label">Comida rescatada</div>
-                </div>
+                    <p class="stat-label">Comida rescatada</p>
+                </article>
             </div>
 
             <div class="grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Últimos Pedidos</span>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table id="ordersTable">
+                <!-- Recent Orders Table -->
+                <section class="card">
+                    <header class="card-header">
+                        <h2 class="card-title">Últimos Pedidos</h2>
+                    </header>
+                    <div class="table-container">
+                        <table id="ordersTable" aria-live="polite">
                             <thead>
                                 <tr>
                                     <th>Código</th>
@@ -337,139 +97,28 @@
                             </thead>
                             <tbody id="ordersTableBody">
                                 <tr>
-                                    <td colspan="6" style="text-align:center;">Cargando...</td>
+                                    <td colspan="6" style="text-align:center;">Cargando datos...</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </section>
 
-                <div>
-                    <div class="card">
-                        <div class="card-header">
-                            <span class="card-title">Top Restaurantes</span>
-                        </div>
-                        <div id="topRestaurants">
-                            <div style="text-align: center; padding: 20px; color: #64748b;">Cargando...</div>
-                        </div>
+                <!-- Top Restaurants Sidebar -->
+                <section class="card">
+                    <header class="card-header">
+                        <h2 class="card-title">Top Restaurantes</h2>
+                    </header>
+                    <div id="topRestaurants" aria-live="polite">
+                        <div style="text-align: center; padding: 20px; color: #64748b;">Analizando ventas...</div>
                     </div>
-                </div>
+                </section>
             </div>
         </main>
     </div>
 
-    <script>
-        // Configuración Supabase
-        const SUPABASE_URL = 'https://hyqaalkyposwzrvinbtv.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5cWFhbGt5cG9zd3pydmluYnR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg0OTk2MjgsImV4cCI6MjA1NDA3NTYyOH0.placeholder';
-
-        let supabase = null;
-        let useSupabase = false;
-
-        try {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                useSupabase = true;
-            }
-        } catch (e) { }
-
-        // Fecha actual
-        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('es-MX', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
-
-        async function loadData() {
-            let orders = [];
-            let restaurants = [];
-
-            // 1. Cargar datos (Supabase o LocalStorage)
-            try {
-                if (useSupabase && supabase) {
-                    const { data: ordersData } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-                    const { data: restData } = await supabase.from('restaurants').select('*');
-                    if (ordersData) orders = ordersData;
-                    if (restData) restaurants = restData;
-                }
-            } catch (e) { }
-
-            // Fallback: Combinar con LocalStorage para demo completa
-            const localOrders = JSON.parse(localStorage.getItem('pancomido_orders') || '[]');
-            const localRest = JSON.parse(localStorage.getItem('pancomido_restaurant') ? '[' + localStorage.getItem('pancomido_restaurant') + ']' : '[]');
-
-            // Merging simple
-            orders = [...orders, ...localOrders].reduce((acc, current) => {
-                const x = acc.find(item => item.pickup_code === current.pickup_code);
-                if (!x) return acc.concat([current]);
-                return acc;
-            }, []);
-
-            // 2. Calcular Estadísticas
-            const totalRevenue = orders.reduce((sum, o) => sum + parseFloat(o.total_price || 0), 0);
-            const totalCommission = totalRevenue * 0.25;
-
-            document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toLocaleString('es-MX', { minimumFractionDigits: 2 });
-            document.getElementById('totalCommission').textContent = '$' + totalCommission.toLocaleString('es-MX', { minimumFractionDigits: 2 });
-            document.getElementById('totalOrders').textContent = orders.length;
-            document.getElementById('activeRestaurants').textContent = Math.max(restaurants.length, 3); // Fake 3 minimum for demo
-            document.getElementById('foodSaved').textContent = (orders.length * 0.5).toFixed(1) + ' kg';
-
-            // 3. Renderizar Tabla Pedidos
-            const tbody = document.getElementById('ordersTableBody');
-            if (orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">Sin pedidos registrados</td></tr>';
-            } else {
-                tbody.innerHTML = orders.slice(0, 10).map(o => `
-                    <tr>
-                        <td><strong>${o.pickup_code || '---'}</strong></td>
-                        <td>${o.restaurant_name || 'Desconocido'}</td>
-                        <td>$${o.total_price}</td>
-                        <td class="commission">$${(o.total_price * 0.25).toFixed(2)}</td>
-                        <td><span class="status ${o.status === 'completed' ? 'status-active' : 'status-pending'}">
-                            ${o.status === 'completed' ? 'Completado' : 'Pendiente'}
-                        </span></td>
-                        <td style="font-size: 11px; color: #64748b;">${new Date(o.created_at || Date.now()).toLocaleDateString()}</td>
-                    </tr>
-                `).join('');
-            }
-
-            // 4. Renderizar Top Restaurantes (Agrupado)
-            const restStats = {};
-            orders.forEach(o => {
-                const name = o.restaurant_name || 'Otros';
-                if (!restStats[name]) restStats[name] = { revenue: 0, orders: 0 };
-                restStats[name].revenue += parseFloat(o.total_price || 0);
-                restStats[name].orders += 1;
-            });
-
-            // Convertir a array y ordenar
-            const topRest = Object.entries(restStats)
-                .map(([name, stat]) => ({ name, ...stat }))
-                .sort((a, b) => b.revenue - a.revenue)
-                .slice(0, 5);
-
-            const restContainer = document.getElementById('topRestaurants');
-            if (topRest.length === 0) {
-                restContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #64748b;">Sin datos suficientes</div>';
-            } else {
-                restContainer.innerHTML = topRest.map(r => `
-                    <div class="restaurant-item">
-                        <div class="restaurant-avatar">🏪</div>
-                        <div class="restaurant-info">
-                            <div class="restaurant-name">${r.name}</div>
-                            <div class="restaurant-stats">${r.orders} ventas</div>
-                        </div>
-                        <div class="restaurant-revenue">
-                            <div class="restaurant-revenue-value">$${r.revenue.toLocaleString()}</div>
-                            <div class="restaurant-revenue-label">Comi: $${(r.revenue * 0.25).toLocaleString()}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Cargar al inicio
-        loadData();
-    </script>
+    <!-- App Logic -->
+    <script src="admin.js"></script>
 </body>
 
 </html>

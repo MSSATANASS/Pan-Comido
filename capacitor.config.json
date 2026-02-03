@@ -1,0 +1,8 @@
+{
+  "appId": "com.pancomido.app",
+  "appName": "Pan Comido",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

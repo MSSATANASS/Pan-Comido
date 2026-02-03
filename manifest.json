@@ -1,7 +1,7 @@
 {
     "name": "Pan Comido",
     "short_name": "Pan Comido",
-    "start_url": "/Pan-Comido/app.html",
+    "start_url": "app.html",
     "display": "standalone",
     "background_color": "#1e293b",
     "theme_color": "#22c55e",
@@ -19,5 +19,5 @@
         }
     ],
     "orientation": "portrait",
-    "scope": "/Pan-Comido/"
+    "scope": "./"
 }

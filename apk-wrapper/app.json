@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Pan Comido",
+    "slug": "santo-barbero",
+    "version": "1.0.3",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.pancomido.app"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "77945b61-253f-4e88-9ae6-13016c9e846c"
+      }
+    }
+  }
+}
