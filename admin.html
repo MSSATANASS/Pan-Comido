@@ -29,91 +29,149 @@
             <div class="sidebar-logo">🍕 Pan Comido</div>
             <div class="sidebar-sub">Panel de Administración</div>
             <nav>
-                <button class="nav-item active" aria-current="page">📊 Dashboard</button>
-                <button class="nav-item">🏪 Restaurantes</button>
-                <button class="nav-item">📦 Ofertas</button>
-                <button class="nav-item">🧾 Pedidos</button>
-                <button class="nav-item">👥 Clientes</button>
-                <button class="nav-item">💰 Finanzas</button>
-                <button class="nav-item">⚙️ Configuración</button>
+                <button class="nav-item active" onclick="showSection('dashboard', event)">📊 Dashboard</button>
+                <button class="nav-item" onclick="showSection('restaurants', event)">🏪 Restaurantes</button>
+                <button class="nav-item" onclick="showSection('offers', event)">📦 Ofertas</button>
+                <button class="nav-item" onclick="showSection('orders', event)">🧾 Pedidos</button>
+                <button class="nav-item" onclick="showSection('customers', event)">👥 Clientes</button>
+                <button class="nav-item" onclick="showSection('finance', event)">💰 Finanzas</button>
+                <button class="nav-item" onclick="showSection('settings', event)">⚙️ Configuración</button>
                 <a class="nav-item" href="index.html">🏠 Volver al inicio</a>
             </nav>
         </aside>
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <header class="dash-header">
-                <h1 class="dash-title">Dashboard General</h1>
-                <div class="dash-controls">
-                    <span class="dash-date" id="currentDate"></span>
-                    <button class="btn btn-primary" onclick="loadData()" aria-label="Actualizar datos">
-                        🔄 Actualizar
-                    </button>
+            <!-- Dashboard Section -->
+            <section id="section-dashboard">
+                <header class="dash-header">
+                    <h1 class="dash-title">Dashboard General</h1>
+                    <div class="dash-controls">
+                        <span class="dash-date" id="currentDate"></span>
+                        <button class="btn btn-primary" onclick="loadData()" aria-label="Actualizar datos">
+                            🔄 Actualizar
+                        </button>
+                    </div>
+                </header>
+
+                <div class="stats-grid">
+                    <article class="stat-card primary">
+                        <div class="stat-icon" aria-hidden="true">💰</div>
+                        <div class="stat-value" id="totalRevenue">$0</div>
+                        <p class="stat-label">Ingresos Totales (Bruto)</p>
+                        <div class="stat-highlight">Comisión acumulada: <span id="totalCommission"
+                                style="font-weight: 700;">$0</span></div>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-icon" aria-hidden="true">🧾</div>
+                        <div class="stat-value" id="totalOrders">0</div>
+                        <p class="stat-label">Pedidos Totales</p>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-icon" aria-hidden="true">🏪</div>
+                        <div class="stat-value" id="activeRestaurants">0</div>
+                        <p class="stat-label">Restaurantes Activos</p>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-icon" aria-hidden="true">🌱</div>
+                        <div class="stat-value" id="foodSaved">0 kg</div>
+                        <p class="stat-label">Comida rescatada</p>
+                    </article>
                 </div>
-            </header>
 
-            <div class="stats-grid">
-                <article class="stat-card primary">
-                    <div class="stat-icon" aria-hidden="true">💰</div>
-                    <div class="stat-value" id="totalRevenue">$0</div>
-                    <p class="stat-label">Ingresos Totales (Bruto)</p>
-                    <div class="stat-highlight">Comisión acumulada: <span id="totalCommission"
-                            style="font-weight: 700;">$0</span></div>
-                </article>
-                <article class="stat-card">
-                    <div class="stat-icon" aria-hidden="true">🧾</div>
-                    <div class="stat-value" id="totalOrders">0</div>
-                    <p class="stat-label">Pedidos Totales</p>
-                </article>
-                <article class="stat-card">
-                    <div class="stat-icon" aria-hidden="true">🏪</div>
-                    <div class="stat-value" id="activeRestaurants">0</div>
-                    <p class="stat-label">Restaurantes Activos</p>
-                </article>
-                <article class="stat-card">
-                    <div class="stat-icon" aria-hidden="true">🌱</div>
-                    <div class="stat-value" id="foodSaved">0 kg</div>
-                    <p class="stat-label">Comida rescatada</p>
-                </article>
-            </div>
+                <div class="grid-2">
+                    <!-- Recent Orders Table -->
+                    <section class="card">
+                        <header class="card-header">
+                            <h2 class="card-title">Últimos Pedidos</h2>
+                        </header>
+                        <div class="table-container">
+                            <table id="ordersTable" aria-live="polite">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Restaurante</th>
+                                        <th>Total</th>
+                                        <th>Comisión</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody">
+                                    <tr>
+                                        <td colspan="6" style="text-align:center;">Cargando datos...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
 
-            <div class="grid-2">
-                <!-- Recent Orders Table -->
-                <section class="card">
-                    <header class="card-header">
-                        <h2 class="card-title">Últimos Pedidos</h2>
-                    </header>
-                    <div class="table-container">
-                        <table id="ordersTable" aria-live="polite">
-                            <thead>
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Restaurante</th>
-                                    <th>Total</th>
-                                    <th>Comisión</th>
-                                    <th>Estado</th>
-                                    <th>Fecha</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersTableBody">
-                                <tr>
-                                    <td colspan="6" style="text-align:center;">Cargando datos...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
+                    <!-- Top Restaurants Sidebar -->
+                    <section class="card">
+                        <header class="card-header">
+                            <h2 class="card-title">Top Restaurantes</h2>
+                        </header>
+                        <div id="topRestaurants" aria-live="polite">
+                            <div style="text-align: center; padding: 20px; color: #64748b;">Analizando ventas...</div>
+                        </div>
+                    </section>
+                </div>
+            </section>
 
-                <!-- Top Restaurants Sidebar -->
-                <section class="card">
-                    <header class="card-header">
-                        <h2 class="card-title">Top Restaurantes</h2>
-                    </header>
-                    <div id="topRestaurants" aria-live="polite">
-                        <div style="text-align: center; padding: 20px; color: #64748b;">Analizando ventas...</div>
-                    </div>
-                </section>
-            </div>
+            <!-- Placeholder Sections -->
+            <section id="section-restaurants" style="display: none;">
+                <h1 class="dash-title">Gestión de Restaurantes</h1>
+                <div class="card" style="padding: 40px; text-align: center; margin-top: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🏪</div>
+                    <h3>Próximamente</h3>
+                    <p style="color: #64748b;">Aquí podrás administrar todos los restaurantes registrados.</p>
+                </div>
+            </section>
+
+            <section id="section-offers" style="display: none;">
+                <h1 class="dash-title">Supervisión de Ofertas</h1>
+                <div class="card" style="padding: 40px; text-align: center; margin-top: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">📦</div>
+                    <h3>Próximamente</h3>
+                    <p style="color: #64748b;">Aquí verás todas las ofertas activas en la plataforma.</p>
+                </div>
+            </section>
+
+            <section id="section-orders" style="display: none;">
+                <h1 class="dash-title">Historial Completo de Pedidos</h1>
+                <div class="card" style="padding: 40px; text-align: center; margin-top: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🧾</div>
+                    <h3>Próximamente</h3>
+                    <p style="color: #64748b;">Búsqueda avanzada y exportación de pedidos.</p>
+                </div>
+            </section>
+
+            <section id="section-customers" style="display: none;">
+                <h1 class="dash-title">Base de Datos de Clientes</h1>
+                <div class="card" style="padding: 40px; text-align: center; margin-top: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">👥</div>
+                    <h3>Próximamente</h3>
+                    <p style="color: #64748b;">Gestión de usuarios y métricas de retención.</p>
+                </div>
+            </section>
+
+            <section id="section-finance" style="display: none;">
+                <h1 class="dash-title">Reportes Financieros</h1>
+                <div class="card" style="padding: 40px; text-align: center; margin-top: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">💰</div>
+                    <h3>Próximamente</h3>
+                    <p style="color: #64748b;">Conciliación de pagos y comisiones.</p>
+                </div>
+            </section>
+
+            <section id="section-settings" style="display: none;">
+                <h1 class="dash-title">Configuración Global</h1>
+                <div class="card" style="padding: 40px; text-align: center; margin-top: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">⚙️</div>
+                    <h3>Próximamente</h3>
+                    <p style="color: #64748b;">Ajustes de comisiones, regiones y usuarios admin.</p>
+                </div>
+            </section>
         </main>
     </div>
 

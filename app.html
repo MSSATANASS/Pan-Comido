@@ -137,7 +137,8 @@
                     <span class="nav-icon" aria-hidden="true">🏠</span>
                     <span>Inicio</span>
                 </button>
-                <button class="nav-item" aria-label="Favoritos (próximamente)" disabled>
+                <button class="nav-item" onclick="alert('❤️ Función de Favoritos próximamente!')"
+                    aria-label="Favoritos">
                     <span class="nav-icon" aria-hidden="true">❤️</span>
                     <span>Favoritos</span>
                 </button>
@@ -243,15 +244,15 @@
             </div>
             <main class="profile-content">
                 <div style="background: white; border-radius: 16px; overflow: hidden; margin-bottom: 20px;">
-                    <div class="profile-menu-item">
+                    <div class="profile-menu-item" onclick="demoAlert('Notificaciones')">
                         <span>🔔 Notificaciones</span>
                         <span style="color: var(--primary);">Activado</span>
                     </div>
-                    <div class="profile-menu-item">
+                    <div class="profile-menu-item" onclick="demoAlert('Métodos de Pago')">
                         <span>💳 Métodos de pago</span>
                         <span aria-hidden="true">→</span>
                     </div>
-                    <div class="profile-menu-item">
+                    <div class="profile-menu-item" onclick="demoAlert('Ayuda y Soporte')">
                         <span>❓ Ayuda y Soporte</span>
                         <span aria-hidden="true">→</span>
                     </div>
@@ -278,6 +279,11 @@
                     <span class="nav-icon" aria-hidden="true">🧾</span>
                     <span>Pedidos</span>
                 </button>
+                <button class="nav-item" onclick="alert('❤️ Función de Favoritos próximamente!')"
+                    aria-label="Favoritos">
+                    <span class="nav-icon" aria-hidden="true">❤️</span>
+                    <span>Favoritos</span>
+                </button>
                 <button class="nav-item active" onclick="showScreen('profileScreen')" aria-label="Mi perfil"
                     aria-current="page">
                     <span class="nav-icon" aria-hidden="true">👤</span>
@@ -298,15 +304,29 @@
                 <div class="modal-code-value" id="pickupCode" aria-live="assertive">ABC123</div>
             </div>
             <button class="modal-btn" onclick="closeModal()">Ver mis pedidos</button>
-            <a href="#" id="waLink" target="_blank" rel="noopener noreferrer" class="btn-whatsapp"
-                aria-label="Confirmar pedido por WhatsApp">
-                <span aria-hidden="true">💬</span> Confirmar por WhatsApp
-            </a>
         </div>
     </div>
 
     <!-- App Logic -->
     <script src="app.js"></script>
+    <script>
+        // Inline handlers for specific demo buttons to ensure connectivity
+        function demoAlert(feature) {
+            alert('🚧 ' + feature + ':\nEsta función estará disponible en la próxima versión.');
+        }
+    </script>
+</body>
+
+</html>
+<a href="#" id="waLink" target="_blank" rel="noopener noreferrer" class="btn-whatsapp"
+    aria-label="Confirmar pedido por WhatsApp">
+    <span aria-hidden="true">💬</span> Confirmar por WhatsApp
+</a>
+</div>
+</div>
+
+<!-- App Logic -->
+<script src="app.js"></script>
 </body>
 
 </html>

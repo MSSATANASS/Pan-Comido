@@ -15,6 +15,26 @@ try {
     console.warn('Supabase init failed in admin dashboard:', e);
 }
 
+// State Management for Navigation
+function showSection(section, event) {
+    // Hide all sections
+    document.querySelectorAll('section[id^="section-"]').forEach(s => s.style.display = 'none');
+
+    // Show target section
+    const targetSection = document.getElementById('section-' + section);
+    if (targetSection) {
+        targetSection.style.display = 'block';
+    }
+
+    // Update nav active state
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    // If called from click, event.currentTarget will be the nav item
+    if (event) {
+        event.currentTarget.classList.add('active');
+    }
+}
+
 /**
  * Initialize page
  */
