@@ -9,7 +9,10 @@ const CONFIG = {
     // App Settings
     APP_VERSION: '1.0.3',
     COMMISSION_RATE: 0.25,
-    FETCH_TIMEOUT_MS: 2000,
+    FETCH_TIMEOUT_MS: 3000,
+
+    // Feature Flags
+    USE_DEMO_DATA: localStorage.getItem('pancomido_use_demo') === 'true',
 
     // Demo/Fallback Data
     DEMO_OFFERS: [

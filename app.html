@@ -59,6 +59,18 @@
             <div class="login-logo" aria-hidden="true">🍕</div>
             <h1 class="login-title">Pan Comido</h1>
             <p class="login-subtitle">Rescata comida, ahorra dinero</p>
+
+            <!-- Mode Toggle -->
+            <div class="mode-toggle-container"
+                style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; align-items: center;">
+                <span style="font-size: 14px; color: white;">Modo:</span>
+                <label class="switch">
+                    <input type="checkbox" id="demoModeToggle" onchange="toggleDemoMode(this)">
+                    <span class="slider round"></span>
+                </label>
+                <span id="modeLabel" style="font-size: 14px; font-weight: bold; color: #4ade80;">🧪 DEMO</span>
+            </div>
+
             <div class="login-form">
                 <div class="input-group">
                     <label for="userName" class="sr-only">Tu nombre</label>
@@ -308,12 +320,44 @@
     </div>
 
     <!-- App Logic -->
+    <script src="demo_data.js"></script>
     <script src="app.js"></script>
     <script>
-        // Inline handlers for specific demo buttons to ensure connectivity
+        // Inline handlers for specific demo buttons
         function demoAlert(feature) {
             alert('🚧 ' + feature + ':\nEsta función estará disponible en la próxima versión.');
         }
+
+        // Demo Mode Toggle Logic
+        function toggleDemoMode(checkbox) {
+            const label = document.getElementById('modeLabel');
+            if (checkbox.checked) {
+                label.textContent = "🧪 DEMO";
+                label.style.color = "#4ade80"; // Green
+                localStorage.setItem('pancomido_use_demo', 'true');
+                if (typeof injectDemoData === 'function') injectDemoData(true);
+            } else {
+                label.textContent = "☁️ REAL";
+                label.style.color = "#60a5fa"; // Blue
+                localStorage.setItem('pancomido_use_demo', 'false');
+                if (typeof clearDemoData === 'function') clearDemoData();
+                alert("Modo Real Activado. \nConectando a base de datos...");
+            }
+        }
+
+        // Init Toggle State
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDemo = localStorage.getItem('pancomido_use_demo') !== 'false';
+            const toggle = document.getElementById('demoModeToggle');
+            const label = document.getElementById('modeLabel');
+
+            if (toggle) {
+                toggle.checked = isDemo;
+                label.textContent = isDemo ? "🧪 DEMO" : "☁️ REAL";
+                label.style.color = isDemo ? "#4ade80" : "#60a5fa";
+                if (isDemo && typeof injectDemoData === 'function') injectDemoData(false);
+            }
+        });
     </script>
 </body>
 
